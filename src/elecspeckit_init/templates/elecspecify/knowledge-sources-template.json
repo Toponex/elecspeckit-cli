@@ -1,0 +1,74 @@
+{
+  "standards": {
+    "enabled": true,
+    "sources": []
+  },
+  "company_kb": {
+    "enabled": true,
+    "sources": []
+  },
+  "reference_designs": {
+    "enabled": true,
+    "sources": []
+  },
+  "web": {
+    "enabled": true,
+    "sources": [
+      {
+        "id": "metaso",
+        "name": "Metaso学术搜索",
+        "url": "https://metaso.cn/api/v1/search",
+        "api_key": "{{PLACEHOLDER:请填写Metaso API密钥或使用ENV:METASO_API_KEY}}",
+        "method": "POST",
+        "headers": {
+          "Authorization": "Bearer {{api_key}}",
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        "body_template": {
+          "q": "{{query}}",
+          "scope": "scholar",
+          "includeSummary": true,
+          "size": 50,
+          "conciseSnippet": false
+        },
+        "response_parser": {
+          "results_path": "$.data.results",
+          "title": "$.title",
+          "abstract": "$.abstract",
+          "url": "$.url"
+        },
+        "enabled": false
+      },
+      {
+        "id": "volces",
+        "name": "Volces知识库",
+        "url": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+        "api_key": "{{PLACEHOLDER:请填写Volces API密钥或使用ENV:VOLCES_API_KEY}}",
+        "method": "POST",
+        "headers": {
+          "Authorization": "Bearer {{api_key}}",
+          "Content-Type": "application/json"
+        },
+        "body_template": {
+          "model": "deepseek-r1-250528",
+          "messages": [
+            {
+              "role": "system",
+              "content": "你是人工智能助手。"
+            },
+            {
+              "role": "user",
+              "content": "{{query}}"
+            }
+          ]
+        },
+        "response_parser": {
+          "results_path": "$.choices",
+          "content": "$.message.content"
+        },
+        "enabled": false
+      }
+    ]
+  }
+}

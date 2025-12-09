@@ -1,0 +1,49 @@
+---
+description: Run ElecSpeckit specification workflow for the current feature.
+handoffs:
+  - label: Create ElecSpeckit Plan
+    agent: elecspeckit.plan
+    prompt: Create an ElecSpeckit implementation plan
+    send: true
+  - label: Clarify ElecSpeckit Spec
+    agent: elecspeckit.clarify
+    prompt: Clarify ElecSpeckit specification requirements
+    send: true
+---
+
+## Command: `/elecspeckit.specify`
+
+**Goal**  
+基于 ElecSpeckit 硬件设计工作流（constitution → specify → plan → tasks → docs），将用户提供的零散/简短自然语言需求逐步转化为结构化的 `spec.md`，而不是要求用户一次性写出完美规格。  
+
+**When to use**  
+- 在任意已经通过 `elecspeckit init --here` 初始化 ElecSpeckit 工作流的硬件项目中，为当前功能特性更新或重建规格 `spec.md`；  
+- 尤其适用于用户只输入了一两句简单描述的场景。  
+
+**Execution Steps (for the AI assistant)**  
+1. 在目标项目根目录工作（已存在 `/elecspeckit.*` 命令模板），定位当前 ElecSpeckit 特性的 `FEATURE_DIR` 与 `FEATURE_SPEC`：  
+   - `FEATURE_DIR = specs/00X-shortname/`（例如 `specs/001-coreboard-gige-usb3/`）；  
+   - `FEATURE_SPEC = FEATURE_DIR/spec.md`。  
+   如路径不明确，先用一个简短问题向用户确认。  
+2. 读取用户在命令后输入的文本（可能只有 1~3 句），判断信息是否足够：  
+   - 如内容很简短或缺少关键维度（功能、性能、环境、安全等），不要要求用户补写长文；  
+   - 而是先为 `FEATURE_SPEC` 建立或更新基本骨架：用户故事、功能需求、非功能需求、成功标准和边缘情况小节，可以先填入占位说明。  
+3. 基于当前 `FEATURE_SPEC` 的缺口构造一批高优先级问题，并为每个问题设计结构化选项（例如 A/B/C/D + E.其他）：  
+   - 问题内容优先覆盖：最重要目标（安全/效率/成本/可制造性）、关键环境条件、最严格的性能或安全约束等；  
+   - 每个问题使用 “A/B/C/D + E.其他（≤20 字）” 的形式给出选项，引导用户用少量中文完成补充。  
+4. 按“一问一答”节奏与用户交互：  
+   - 每次只输出一个问题及选项，提示用户仅需回复选项字母或简短中文；  
+   - 解析用户回答后，立即在 `FEATURE_SPEC` 中：  
+     - 在 `## Clarifications` / `### Session YYYY-MM-DD` 下追加一条 `- Q: ... → A: ...`；  
+     - 在对应章节（例如成功标准或非功能需求）中做最小必要修改，而不是写一大段新文字。  
+5. 重复第 3~4 步，以“每批次约 5 个问题”的节奏逐步处理当前 `FEATURE_SPEC` 中最重要的缺口：  
+   - 每处理完 5 个问题后，询问用户是否继续（例如：“是否继续澄清更多规格问题？Y/N”）；  
+   - 如用户回复“stop/够了/先这样”或选择不继续，则停止提问并结束本次运行；  
+   - 否则继续从尚未澄清的高优先级缺口中选出下一批问题进行提问，直至关键模糊点基本解决或用户主动停止。  
+6. 结束时向用户总结：  
+   - 本轮共问了多少问题、更新了哪些章节；  
+   - 当前 `spec.md` 中仍然明显是“占位/待澄清”的领域，并建议下一步调用 `/elecspeckit.clarify` 或 `/elecspeckit.plan`。  
+
+**Notes**  
+- 把 `spec.md` 当成“用自然语言写的代码”，通过 checklist/analyze/clarify 命令持续改进其质量，而不是直接在实现中“补救”。  
+- 模板不绑定特定后端模块或脚本路径，具体 ElecSpeckit 解析/生成逻辑由项目自身实现并通过测试保障。  
