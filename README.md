@@ -262,5 +262,5 @@ limitations under the License.
 
 If you encounter issues or have suggestions, please provide feedback via:
 
-- **GitHub Issues**: https://github.com/toponex/elecspeckit-cli/issues
+- **GitHub Issues**: https://github.com/Toponex/elecspeckit-cli/issues
 - **Email**: lyk0510abc@gmail.com
