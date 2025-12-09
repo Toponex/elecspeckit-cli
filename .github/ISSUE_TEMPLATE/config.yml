@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: GitHub Discussions / GitHub 讨论区
+    url: https://github.com/Toponex/elecspeckit-cli/discussions
+    about: For general questions and discussions / 用于一般问题讨论
+  - name: Email Support / 邮件支持
+    url: mailto:lyk0510abc@gmail.com
+    about: Contact the maintainer directly / 直接联系维护者
