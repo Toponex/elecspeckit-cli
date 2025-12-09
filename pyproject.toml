@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "elecspeckit-cli"
 version = "0.1.0"
-description = "ElecSpeckit CLI - 硬件/电子项目规范驱动工作流工具"
+description = "ElecSpeckit CLI - AI-Driven Specification-Based Development Workflow Tool for Hardware/Electronics Projects"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
@@ -42,9 +42,9 @@ dev = [
 elecspeckit = "elecspeckit_init.cli:app"
 
 [project.urls]
-Homepage = "https://github.com/toponex/elecspeckit-cli"
-Documentation = "https://github.com/toponex/elecspeckit-cli"
-Repository = "https://github.com/toponex/elecspeckit-cli"
+Homepage = "https://github.com/Toponex/elecspeckit-cli"
+Documentation = "https://github.com/Toponex/elecspeckit-cli"
+Repository = "https://github.com/Toponex/elecspeckit-cli"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/elecspeckit_init"]
