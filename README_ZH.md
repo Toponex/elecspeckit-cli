@@ -74,18 +74,38 @@ ElecSpeckit 通过代码规则约束 AI 输出，但受限于 Transformer 架构
 - `[VIEW:DATASHEET]` → `docs/product-doc.md` - 对外发布的产品文档（过滤内部信息）
 - `[VIEW:KB]` → `docs/kb-view.md` - 知识库管理员关注的设计经验、ADR 记录
 
-## 安装
+## 源代码仓库
 
-使用 `uv` 工具安装（推荐）：
+本项目托管在以下平台：
+
+- **GitHub**: https://github.com/Toponex/elecspeckit-cli
+- **Gitee（中国镜像）**: https://gitee.com/lyk0510/elecspeckit-cli
+
+克隆仓库：
 
 ```bash
-uv tool install elecspeckit-cli
+# 从 GitHub 克隆
+git clone https://github.com/Toponex/elecspeckit-cli.git
+
+# 从 Gitee 克隆（推荐国内用户）
+git clone https://gitee.com/lyk0510/elecspeckit-cli.git
 ```
 
-或使用 `pip`：
+## 安装
+
+克隆仓库并从源代码安装：
 
 ```bash
-pip install elecspeckit-cli
+# 从 GitHub 克隆
+git clone https://github.com/Toponex/elecspeckit-cli.git
+cd elecspeckit-cli
+
+# 或从 Gitee 克隆（推荐国内用户）
+git clone https://gitee.com/lyk0510/elecspeckit-cli.git
+cd elecspeckit-cli
+
+# 使用 uv 安装
+uv tool install .
 ```
 
 ## 快速开始

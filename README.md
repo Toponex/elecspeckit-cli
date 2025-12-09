@@ -72,16 +72,15 @@ Auto-extracted from `tasks.md` based on `[VIEW:XXX]` tags to generate role-speci
 
 ## Installation
 
-Using `uv` (recommended):
+Clone the repository and install from source:
 
 ```bash
-uv tool install elecspeckit-cli
-```
+# Clone from GitHub
+git clone https://github.com/Toponex/elecspeckit-cli.git
+cd elecspeckit-cli
 
-Or using `pip`:
-
-```bash
-pip install elecspeckit-cli
+# Install using uv
+uv tool install .
 ```
 
 ## Quick Start
