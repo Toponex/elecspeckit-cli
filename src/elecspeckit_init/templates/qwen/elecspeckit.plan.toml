@@ -1,0 +1,64 @@
+description = "Run ElecSpeckit implementation planning workflow for the current feature."
+
+prompt = """
+/elecspeckit.plan
+
+Goal
+在基于 ElecSpeckit 的硬件项目中，根据当前特性的 spec.md 生成和维护 plan.md、research.md、data-model.md（以及必要时的 quickstart.md 等）实施计划文档，为后续 /elecspeckit.tasks 和 /elecspeckit.docs 阶段提供清晰的技术规划。
+
+Execution Steps (for the AI assistant)
+1. Setup（路径与上下文）
+   - 在目标项目根目录工作，与用户确认当前特性所在的 FEATURE_DIR（例如 specs/00X-shortname/）；
+   - 如已实现 .elecspecify/scripts/powershell/setup-plan.ps1，则运行该脚本并从 JSON 中解析：
+     - FEATURE_SPEC       = FEATURE_DIR/spec.md；
+     - IMPL_PLAN         = FEATURE_DIR/plan.md；
+     - FEATURE_RESEARCH  = FEATURE_DIR/research.md；
+     - FEATURE_DATA_MODEL = FEATURE_DIR/data-model.md；
+     - FEATURE_QUICKSTART = FEATURE_DIR/quickstart.md（如需要）；
+     - 以及 SPECS_DIR、BRANCH 等元信息。
+   - 如脚本尚未实现，可在对话中与用户确认这些路径。
+2. 初始化或对齐 plan.md 结构
+   - 若 IMPL_PLAN 不存在或几乎为空：
+     - 使用 .elecspecify/templates/plan-template.md 的结构为该特性创建一个 plan.md 骨架，至少包含：
+       - 技术上下文（语言/依赖/目标平台等）；
+       - 宪法检查（Constitution Check）；
+       - 命令行为设计（与 /elecspeckit.* 的关系）；
+       - 阶段规划（如 Phase 0/1/2/US1/US2/US3/优化）；
+       - 复杂性跟踪或等效治理小节。
+   - 若已有 plan.md：在保留工程师已有内容的前提下，对照模板补齐缺失的小节与标题（增量对齐结构）。
+3. Phase 0：Outline & Research → research.md
+   - 从 FEATURE_SPEC 和项目宪法中提取技术上下文中的 unknowns/NEEDS CLARIFICATION 条目；
+   - 将这些未知项转化为研究任务，在 FEATURE_RESEARCH 中记录：
+     - Decision: [选用的器件/拓扑/策略]
+     - Rationale: [为何选择它]
+     - Alternatives considered: [评估过的其他方案]
+   - 若 FEATURE_RESEARCH 尚不存在：创建 research.md，并使用上述结构填充；若已存在则在相应区域追加内容。
+4. Phase 1：Design & Data Model → data-model.md / quickstart.md
+   - 从 FEATURE_SPEC 中识别硬件实体和关系（板卡、电源域、接口、保护电路等），在 FEATURE_DATA_MODEL 中描述：
+     - 实体名称、关键属性；
+     - 实体之间的关系（信号链/供电/热耦合等）；
+     - 与需求中的验证点对应关系。
+   - 如项目需要快速上手指南，在 FEATURE_QUICKSTART 中起草：
+     - 如何在实验台/系统中连接本特性板卡；
+     - 基本上电/关机/安全操作步骤；
+     - 首轮验证建议（最小可行测试集合）。
+5. Architecture & Tradeoffs → plan.md
+   - 基于 research.md 和 data-model.md 的结论，在 IMPL_PLAN 中补全 Architecture / Tradeoffs / 阶段规划 小节：
+     - 选择的拓扑/板层/接口方案；
+     - 安规/性能/成本/可制造性之间的权衡；
+     - 与项目宪法关键原则的对齐情况。
+   - 采用“一问一答”的方式与用户交互，每次只问一个架构问题，问题选项使用 A/B/C/D + E.其他（≤20 字）；
+   - 每处理完约 5 个问题后询问用户是否继续，如用户选择停止，则结束本轮计划更新。
+6. 对照 tasks/docs 对齐结构
+   - 在已有 tasks.md 和 checklist / analyze / clarify 结果的基础上：
+     - 确保计划中的阶段划分（设置、基础、US1/US2/US3、优化）与 tasks.md 中的任务结构大致一致；
+     - 如发现 spec/plan/tasks 不一致，应在 plan.md 的“复杂性跟踪”或等效小节中记录差异，并为 /elecspeckit.tasks 预留修正任务。
+7. 向用户总结
+   - 总结 IMPL_PLAN 本轮更新的重点（例如技术上下文调整、架构方向选择、边缘情况策略、日志与本地化 NFR 的落地方式）；
+   - 指出 FEATURE_RESEARCH、FEATURE_DATA_MODEL、FEATURE_QUICKSTART 是否被创建或扩展；
+   - 说明当前计划是否已经为下一步 /elecspeckit.tasks 拆分任务和 /elecspeckit.docs 生成文档提供足够信息。
+
+Notes
+- 计划文件应保持“需求驱动”的风格：从 spec.md 和宪法原则出发，解释为何要做出某种技术决策，而不是只列实现细节；
+- 模板不绑定特定后端模块或脚本路径，具体 ElecSpeckit 规划逻辑由项目自身实现并通过测试保障。
+"""

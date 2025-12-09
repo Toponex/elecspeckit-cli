@@ -1,0 +1,36 @@
+---
+description: Run ElecSpeckit docs workflow to generate multi-role and product documentation for the current hardware feature.
+handoffs: []
+---
+
+## Command: `/elecspeckit.docs`
+
+**Goal**  
+在基于 ElecSpeckit 的硬件项目中，基于当前特性的 `spec.md`、`plan.md` 与 `tasks.md` 生成多角色视图文档和对外 ProductDocumentation 草稿，完成“implement/docs” 阶段，并检查关键技术参数与 tradeoff_factors 的一致性。
+
+**Execution Steps (for the AI assistant)**  
+1. 在目标项目根目录工作，与用户确认当前特性的 `FEATURE_DIR = specs/00X-shortname/`，并在其中定位：  
+   - `FEATURE_SPEC   = FEATURE_DIR/spec.md`；  
+   - `IMPL_PLAN      = FEATURE_DIR/plan.md`；  
+   - `FEATURE_TASKS  = FEATURE_DIR/tasks.md`；  
+   - `FEATURE_DOCS   = FEATURE_DIR/docs/`（如不存在，则创建）。  
+2. 从 `spec.md`/`plan.md` 中提取角色与关注点：  
+   - 例如 PM、硬件设计工程师、测试工程师、文档工程师、客户等；  
+   - 把每类角色最关心的问题（范围、风险、接口、验证方式等）整理出来。  
+3. 根据 ElecSpeckit 工作流，为每个角色生成或更新对应视图文档：  
+   - 对内部角色（PM/测试/文档等）写 RoleView 文档，突出各自需要的摘要与细节；  
+   - 对外部受众生成 ProductDocumentation 草稿（如 datasheet、user_guide），并确保关键技术参数与 `spec.md` / `ArchitecturePlan` 一致。  
+4. 对照 `tasks.md` 和 checklist/analyze/clarify 的结果：  
+   - 确认所有已完成的任务（尤其是与文档相关的任务）在文档中有体现；  
+   - 对 checklist 或 analyze 中指出的文档 Gap，确保在本轮 docs 更新中得到了处理或明确标记为后续工作。  
+5. 在发现文档与规格/计划不一致的地方：  
+   - 在 `spec.md` 的 Clarifications 或等效区域新增 `[CLARIFY]` 项，记录冲突与待决问题；  
+   - 在 `plan.md` 的“复杂性跟踪”或“需求覆盖概览”中登记影响，并在后续 `/elecspeckit.tasks` 中增加相应修正任务。  
+6. 向用户总结：  
+   - 本次更新生成或修改了哪些文档（路径和角色/受众）；  
+   - 哪些关键决策/权衡点已经在文档中清晰体现，哪些仍需要进一步 Clarify 或 Review。  
+
+**Notes**  
+- `/elecspeckit.docs` 代表 ElecSpeckit 工作流中的“implement/docs” 阶段，重点是让硬件特性的规格与架构在文档层面可读、可审查、可交付，而不是重新设计需求或架构；  
+- 文档应保持与 `spec.md` / `plan.md` / `tasks.md` 一致，任何发现的不一致都应通过 Clarify / Plan / Tasks 这三个环节回流修正，而不是只在文档里“补丁”；  
+- 模板不绑定具体的文档生成实现，由项目自身决定使用哪种工具或脚本，并通过测试确保一致性。  
