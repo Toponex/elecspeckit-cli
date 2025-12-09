@@ -831,5 +831,5 @@ limitations under the License.
 
 如遇到问题或有建议，欢迎通过以下方式反馈：
 
-- **GitHub Issues**: https://github.com/toponex/elecspeckit-cli/issues
+- **GitHub Issues**: https://github.com/Toponex/elecspeckit-cli/issues
 - **Email**: lyk0510abc@gmail.com
