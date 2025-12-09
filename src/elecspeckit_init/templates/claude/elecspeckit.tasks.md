@@ -25,9 +25,13 @@ handoffs:
 4. 将 clarify / checklist / analyze 的结论纳入任务清单：  
    - 对于 checklist 或 analyze 中标记的 Gap/Ambiguity，确保存在对应的治理或实现任务（例如补充文档、调整架构、增加 edge case 覆盖）；  
    - 对于 `/elecspeckit.clarify` 生成的澄清问题，如已得到答案，应通过任务推动把回答落实到 spec/plan/docs。  
-5. 在任务中明确依赖关系与并行机会：  
-   - 标记可以并行的任务为 `[P]`，避免不同任务争用同一文件；  
-   - 保持“先测试再实现”的顺序（先 TDD 任务，再实现任务），并在任务描述中指出依赖的测试文件。  
+5. 在任务中明确依赖关系与并行机会：
+   - 标记可以并行的任务为 `[P]`，避免不同任务争用同一文件；
+   - 保持"验证先行"的顺序，根据测试类型区分：
+     - **[L1] 计算/仿真测试**（可编程）：先编写测试脚本，再编写实现脚本（TDD 原则）；
+     - **[L2] 样机功能测试**（部分可编程）：先编写测试方案（`docs/test_plans/xxx_plan.md`），再执行样机测试并记录结果（`docs/test_reports/xxx_report.md`），可选自动化脚本（`scripts/test_xxx.py`）；
+     - **[L3] 环境/认证测试**（不可编程）：先编写送测计划（`docs/test_plans/xxx_certification_plan.md`），再准备样品送测。
+   - 在任务描述中明确依赖的测试文件/文档路径。  
 6. 向用户报告：  
    - 调整后的任务总数与 US1/US2/US3 覆盖情况；  
    - 哪些 checklist/analyze/clarify 中提到的问题已经通过任务体现，哪些仍需后续迭代。  

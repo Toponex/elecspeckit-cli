@@ -7,6 +7,7 @@ ElecSpeckit CLI 是一个专为硬件工程师设计的命令行工具，通过�
 ## 为什么需要 ElecSpeckit？
 
 硬件项目的痛点：
+
 - 📋 **需求不清晰**：客户需求模糊，反复返工浪费时间和成本
 - 🏗️ **设计决策难追溯**：为什么选这个芯片？拓扑为什么这样设计？过了几个月谁也说不清
 - 👥 **跨角色协作混乱**：硬件工程师、测试工程师、FA、PM 各说各话，缺乏统一信息源
@@ -14,16 +15,25 @@ ElecSpeckit CLI 是一个专为硬件工程师设计的命令行工具，通过�
 - 🔄 **文档更新滞后**：设计改了，BOM没改，测试用例也没更新，文档一致性难保证
 
 ElecSpeckit 的解决方案：
+
 - ✅ **AI 辅助澄清需求**：通过 `/elecspeckit.clarify` 自动发现规格中的模糊点，以选择题形式快速澄清
 - ✅ **结构化架构决策**：`/elecspeckit.plan` 引导完成 Phase 0 研究（如拓扑选择、器件选型），并在 `research.md` 中记录决策依据
 - ✅ **自动生成角色视图**：一份 `tasks.md` 自动生成 HW/BOM/Test/FA/PM 等 7 个角色专属视图，信息同步零延迟
 - ✅ **统一知识源配置**：`/elecspeckit.kbconfig` 管理所有外部知识源（IPC 标准、公司知识库、参考设计），一键查询
 - ✅ **文档一致性检查**：`/elecspeckit.analyze` 自动检测 spec/plan/tasks 之间的不一致，验证需求覆盖、宪法对齐和术语一致性
 
+## ⚠️ 重要提示
+
+ElecSpeckit 通过代码规则约束 AI 输出，但受限于 Transformer 架构的固有特性，**LLM 仍可能在标准名称、文件引用、参数规格等方面产生"幻觉"**。
+
+**请务必校对**：所有 LLM 生成的设计文件（spec、plan、tasks、docs）在投入使用前，必须由工程师/设计人员完整审核，避免幻觉内容导致设计失误。人工审核是质量保证的最后防线。
+
 ## 核心概念
 
 ### 1. 项目宪法 (Constitution)
+
 存储在 `.elecspecify/memory/constitution.md`，定义项目级的设计原则和约束，例如：
+
 - 可靠性原则：所有电源必须有过流保护、过压保护
 - 安全原则：隔离电压必须满足 IEC 61010-1 标准
 - 成本约束：单机成本不超过 ¥500
@@ -31,14 +41,18 @@ ElecSpeckit 的解决方案：
 **使用场景**：通过 `/elecspeckit.constitution` 命令创建和维护宪法，后续所有规格、计划、任务生成都会参考这些原则。
 
 ### 2. 特性目录 (Feature Directory)
+
 每个特性（如"AC-DC电源模块"、"CAN通信接口"）对应 `specs/00X-shortname/` 目录，包含：
+
 - `spec.md` - 规格文档（需求、验收标准、Clarifications）
 - `plan.md` - 架构设计（Phase 0 研究、模块划分、接口定义）
 - `tasks.md` - 任务拆解（带 `[VIEW:XXX]` 标记分配给不同角色）
 - `docs/` - 自动生成的 7 个角色视图文档
 
 ### 3. 知识源配置 (Knowledge Sources)
+
 存储在 `.elecspecify/memory/knowledge-sources.json`，支持 4 类知识源：
+
 - **standards**: 行业标准（如 IPC-2221B PCB设计标准）
 - **company_kb**: 公司知识库（设计指南、失效分析报告）
 - **reference_designs**: 参考设计（TI、ADI 等厂商的评估板）
@@ -47,7 +61,9 @@ ElecSpeckit 的解决方案：
 **使用场景**：在 `/elecspeckit.plan` 做拓扑选择时，AI 会自动查询配置的参考设计和标准；在 `/elecspeckit.specify` 澄清需求时，会引用相关行业标准。
 
 ### 4. 角色视图 (Role-based Views)
+
 从 `tasks.md` 自动提取 `[VIEW:XXX]` 标记的任务，生成不同角色的专属文档：
+
 - `[VIEW:HW]` → `docs/hw-view.md` - 硬件工程师关注的原理图设计、器件选型
 - `[VIEW:BOM]` → `docs/bom-view.md` - BOM工程师关注的物料清单、供应商、成本
 - `[VIEW:TEST]` → `docs/test-view.md` - 测试工程师关注的验收场景、测试用例
@@ -81,6 +97,7 @@ elecspeckit check
 ```
 
 **输出示例**：
+
 ```
 ElecSpeckit CLI - 工具环境检查
 ├─ Required Tools (必需)
@@ -95,10 +112,12 @@ ElecSpeckit CLI - 工具环境检查
 ```
 
 符号说明：
+
 - `●` (绿色) - 工具可用
 - `○` (黄色/红色) - 工具未找到
 
 **JSON 输出**（用于脚本集成）：
+
 ```bash
 elecspeckit check --json
 ```
@@ -113,6 +132,7 @@ elecspeckit init
 ```
 
 **交互式选择 AI 平台**：
+
 ```
 ElecSpeckit CLI v0.1.0
 
@@ -122,11 +142,13 @@ ElecSpeckit CLI v0.1.0
 ```
 
 **非交互式初始化**（用于 CI/CD）：
+
 ```bash
 elecspeckit init --platform claude
 ```
 
 **跳过 git 初始化**：
+
 ```bash
 elecspeckit init --no-git
 ```
@@ -186,16 +208,19 @@ elecspeckit init --no-git
 **用途**：创建或更新项目级设计原则和约束，作为所有特性规格的指导方针。
 
 **典型场景**：
+
 - 项目启动时定义核心原则（如"所有电源必须有过流保护"）
 - 需求变更时补充新约束（如客户新增"成本不超过¥500"的要求）
 
 **工作流**：
+
 1. AI 读取现有 `.elecspecify/memory/constitution.md`
 2. 根据用户输入（如"补充成本约束"）生成新条款
 3. 以问答形式确认关键条款
 4. 写回 `constitution.md`，并可选同步更新相关模板
 
 **输入示例**：
+
 ```
 /elecspeckit.constitution 补充成本和安全约束
 ```
@@ -209,11 +234,13 @@ elecspeckit init --no-git
 **用途**：管理 `.elecspecify/memory/knowledge-sources.json`，添加/更新/删除行业标准、公司知识库、参考设计、在线知识库等外部信息源。
 
 **典型场景**：
+
 - 添加 IPC-2221B PCB 设计标准（本地 PDF 文件）
 - 配置公司内部知识库 API（如 Volces）
 - 添加 TI 参考设计（评估板原理图链接）
 
 **工作流**：
+
 1. AI 读取现有 `knowledge-sources.json`
 2. 根据用户需求调用对应脚本：
    - `kbconfig_add.py` - 添加新条目
@@ -224,6 +251,7 @@ elecspeckit init --no-git
 4. 写回 JSON 文件
 
 **输入示例**：
+
 ```
 /elecspeckit.kbconfig 添加 IPC-2221B 标准，文件路径 F:/Standards/IPC-2221B.pdf
 ```
@@ -239,10 +267,12 @@ elecspeckit init --no-git
 **用途**：从简单的功能描述自动创建或更新 `specs/00X-shortname/spec.md`，包括用户故事、验收标准、Clarifications 等结构化内容。
 
 **典型场景**：
+
 - 创建新特性："增加 AC-DC 电源模块，输入 85-265VAC，输出 12V/5A"
 - 更新现有规格：补充澄清的需求细节
 
 **工作流**：
+
 1. 推导短名称（如 `ac-dc-power`）和特性编号（如 `001`）
 2. 如果是新特性，创建 `specs/001-ac-dc-power/` 目录和 `spec.md` 骨架
 3. 根据功能描述生成用户故事、验收标准
@@ -250,11 +280,13 @@ elecspeckit init --no-git
 5. 如果是更新，增量对齐结构，保留 Clarifications 等用户内容
 
 **输入示例**：
+
 ```
 /elecspeckit.specify AC-DC电源模块，输入85-265VAC，输出12V/5A，效率>85%
 ```
 
 **输出**：
+
 - 新建 `specs/001-ac-dc-power/spec.md`
 - 包含用户故事、验收标准、功能需求、非功能需求等章节
 
@@ -265,11 +297,13 @@ elecspeckit init --no-git
 **用途**：基于 `spec.md`，生成 `plan.md`（架构设计）、`research.md`（Phase 0 研究）、`data-model.md`（数据模型/接口定义）。
 
 **典型场景**：
+
 - 拓扑选择：AC-DC 用 Flyback 还是 LLC？
 - 器件选型：PFC 控制器用哪个型号？
 - 接口定义：AC Input Filter → PFC → DC-DC 各模块的输入输出参数
 
 **工作流**：
+
 1. 读取 `spec.md` 和项目宪法
 2. 生成 `research.md` 中的 Phase 0 研究问题列表（如"拓扑选择：Flyback vs LLC"）
 3. 对每个研究问题，引导查询知识源（参考设计、标准）并记录决策依据
@@ -277,11 +311,13 @@ elecspeckit init --no-git
 5. 在 `data-model.md` 中定义模块间接口参数
 
 **输入示例**：
+
 ```
 /elecspeckit.plan
 ```
 
 **输出**：
+
 - `specs/001-ac-dc-power/plan.md`
 - `specs/001-ac-dc-power/research.md`
 - `specs/001-ac-dc-power/data-model.md`
@@ -295,10 +331,12 @@ elecspeckit init --no-git
 **用途**：基于 `plan.md`，生成依赖有序的 `tasks.md`，每个任务标记所属角色（`[VIEW:XXX]`）和类型（`[MANUAL]`/`[AUTO]`）。
 
 **典型场景**：
+
 - 将"AC-DC电源模块"架构拆解为具体任务（原理图设计、PCB布局、器件选型、测试用例编写）
 - 分配任务给不同角色（硬件工程师、BOM工程师、测试工程师、FA工程师、PM）
 
 **工作流**：
+
 1. 读取 `spec.md` 和 `plan.md`
 2. 按架构模块生成任务（如"设计 AC Input Filter 原理图"、"选型 PFC 控制器"）
 3. 为每个任务标记 `[VIEW:HW]`、`[VIEW:BOM]`、`[VIEW:TEST]` 等，用于后续生成角色视图
@@ -306,11 +344,13 @@ elecspeckit init --no-git
 5. 写入 `tasks.md`
 
 **输入示例**：
+
 ```
 /elecspeckit.tasks
 ```
 
 **输出**：
+
 - `specs/001-ac-dc-power/tasks.md`
 - 包含分阶段、依赖有序、角色标记的任务列表
 
@@ -319,21 +359,25 @@ elecspeckit init --no-git
 #### `/elecspeckit.doc-hw` - 生成硬件工程师视图（P1 核心）
 
 **用途**：从 `tasks.md` 提取 `[VIEW:HW]` 标记的任务，生成 `docs/hw-view.md`，专为硬件工程师提供：
+
 - 架构模块定义（从 `plan.md` 提取）
 - 原理图设计任务
 - 器件选型任务
 - `[MANUAL]` 任务中的设计文件路径引用
 
 **典型场景**：
+
 - 硬件工程师只需查看 `hw-view.md`，无需阅读完整的 `spec.md` 和 `tasks.md`
 - 清晰了解自己负责的模块和设计任务
 
 **输入示例**：
+
 ```
 /elecspeckit.doc-hw
 ```
 
 **输出**：
+
 - `specs/001-ac-dc-power/docs/hw-view.md`
 - 包含硬件相关任务和设计要求
 
@@ -342,20 +386,24 @@ elecspeckit init --no-git
 #### `/elecspeckit.doc-bom` - 生成 BOM/供应链视图（P1 核心）
 
 **用途**：从 `tasks.md` 提取 `[VIEW:BOM]` 标记的任务，生成 `docs/bom-view.md`，包含：
+
 - 器件规格和型号
 - 供应商信息和交期
 - 成本分析和预算跟踪
 
 **典型场景**：
+
 - BOM 工程师快速生成物料清单
 - 跟踪器件成本和供应链风险
 
 **输入示例**：
+
 ```
 /elecspeckit.doc-bom
 ```
 
 **输出**：
+
 - `specs/001-ac-dc-power/docs/bom-view.md`
 
 ---
@@ -365,15 +413,18 @@ elecspeckit init --no-git
 **用途**：从 `spec.md` 提取验收场景，从 `tasks.md` 提取 `[VIEW:TEST]` 标记的任务，生成 `docs/test-view.md`，建立测试用例与验收标准的覆盖关系。
 
 **典型场景**：
+
 - 测试工程师编写测试计划
 - 验证每个验收标准是否被测试覆盖
 
 **输入示例**：
+
 ```
 /elecspeckit.doc-test
 ```
 
 **输出**：
+
 - `specs/001-ac-dc-power/docs/test-view.md`
 
 ---
@@ -381,16 +432,19 @@ elecspeckit init --no-git
 #### `/elecspeckit.doc-fa` - 生成 FA/制造视图（P2 重要）
 
 **用途**：从 `tasks.md` 提取 `[VIEW:FA]` 标记的任务，生成 `docs/fa-view.md`，包含：
+
 - DFM 评估要求
 - 测试点设计
 - 组装注意事项
 
 **输入示例**：
+
 ```
 /elecspeckit.doc-fa
 ```
 
 **输出**：
+
 - `specs/001-ac-dc-power/docs/fa-view.md`
 
 ---
@@ -398,16 +452,19 @@ elecspeckit init --no-git
 #### `/elecspeckit.doc-pm` - 生成项目经理视图（P2 重要）
 
 **用途**：从 `spec.md` 提取用户故事优先级，从 `tasks.md` 提取 `[VIEW:PM]` 标记的任务和里程碑，生成 `docs/pm-view.md`，包含：
+
 - 项目里程碑和关键路径
 - 风险跟踪
 - 进度概览
 
 **输入示例**：
+
 ```
 /elecspeckit.doc-pm
 ```
 
 **输出**：
+
 - `specs/001-ac-dc-power/docs/pm-view.md`
 
 ---
@@ -417,15 +474,18 @@ elecspeckit init --no-git
 **用途**：从 `spec.md` 和 `plan.md` 筛选对外发布内容（功能需求、技术参数、应用场景），**排除内部实现细节和敏感信息**，生成 `docs/product-doc.md`。
 
 **典型场景**：
+
 - 生成对客户/用户的产品规格书
 - 过滤内部成本、供应商等敏感信息
 
 **输入示例**：
+
 ```
 /elecspeckit.doc-datasheet
 ```
 
 **输出**：
+
 - `specs/001-ac-dc-power/docs/product-doc.md`
 
 ---
@@ -435,16 +495,19 @@ elecspeckit init --no-git
 **用途**：从 `plan.md` 提取架构决策记录（ADR）和 Phase 0 研究结果，从 `tasks.md` 提取 `[VIEW:KB]` 标记的设计经验总结，生成 `docs/kb-view.md`。
 
 **典型场景**：
+
 - 积累公司设计知识库
 - 记录"为什么选 LLC 而不是 Flyback"等决策依据
 - 提取典型问题的解决方案
 
 **输入示例**：
+
 ```
 /elecspeckit.doc-kb
 ```
 
 **输出**：
+
 - `specs/001-ac-dc-power/docs/kb-view.md`
 
 ---
@@ -456,21 +519,25 @@ elecspeckit init --no-git
 **用途**：分析 `spec.md`，自动发现模糊、矛盾、缺失的需求点，以**选择题形式**（A/B/C/D + E.其他 ≤20字）批量提问，将答案记录到 `Clarifications` 区域。
 
 **典型场景**：
+
 - 客户需求"效率要高"太模糊 → 澄清为"效率>85%"
 - 发现"输入电压"和"工作温度"未定义 → 提问并补充
 
 **工作流**：
+
 1. 扫描 `spec.md`，识别模糊点（如范围、优先级、边界条件缺失）
 2. 按优先级排序（范围 > 安全 > 用户体验）
 3. 每批约 5 个问题，循环提问
 4. 将问答追加到 `spec.md` 的 `Clarifications` 区域
 
 **输入示例**：
+
 ```
 /elecspeckit.clarify
 ```
 
 **输出**：
+
 - 更新 `spec.md`，在 Clarifications 区域新增问答记录
 
 ---
@@ -480,15 +547,18 @@ elecspeckit init --no-git
 **用途**：基于 `tasks.md` 生成 `checklists/requirements.md` 等检查清单，确保每个任务都被验证。
 
 **典型场景**：
+
 - 设计评审前检查所有任务完成度
 - 测试前核对验收标准覆盖情况
 
 **输入示例**：
+
 ```
 /elecspeckit.checklist
 ```
 
 **输出**：
+
 - `specs/001-ac-dc-power/checklists/requirements.md`
 
 ---
@@ -498,16 +568,19 @@ elecspeckit init --no-git
 **用途**：综合 `spec.md`、`plan.md`、`tasks.md`、`docs/` 与 `.elecspecify/memory/constitution.md`，输出分析报告，指出不一致、遗漏、冲突。
 
 **典型场景**：
+
 - 发现 `spec.md` 中提到的需求在 `tasks.md` 中没有对应任务
 - 发现 `plan.md` 的设计违反了宪法中的约束
 - 验证所有 `[VIEW:XXX]` 标记的任务都有对应文档
 
 **输入示例**：
+
 ```
 /elecspeckit.analyze
 ```
 
 **输出**：
+
 - 分析报告（纯文本或 JSON），列出发现的问题
 
 ---
@@ -523,6 +596,7 @@ elecspeckit init
 ### 升级行为
 
 升级过程会：
+
 - **自动检测已存在的平台配置**（无需重新选择）
 - **只更新模板文件**：
   - `.claude/commands/elecspeckit.*.md` 或 `.qwen/commands/elecspeckit.*`
@@ -539,15 +613,13 @@ elecspeckit init
 当文件内容发生变化时，ElecSpeckit CLI 会：
 
 1. **创建带时间戳的备份**
+
    ```
    原文件: .elecspecify/templates/spec-template.md
    备份:   .elecspecify/templates/spec-template.md.bak.20250109-153045
    ```
-
 2. **写入新内容**：将最新模板内容写入原文件
-
 3. **提示备份位置**：在输出中显示备份文件名
-
 4. **智能跳过**：如果新旧内容完全相同，跳过更新且不创建备份
 
 ### 重置 constitution.md
@@ -559,6 +631,7 @@ elecspeckit init --reset
 ```
 
 该操作会：
+
 - 生成带时间戳的备份文件（如 `constitution.md.bak.20250109-143022`）
 - 完全覆盖为官方模板内容
 - 提示备份文件位置
@@ -603,6 +676,7 @@ elecspeckit init --platform claude
 ```
 
 此时项目结构：
+
 ```
 ac-dc-power-supply/
 ├── specs/001-ac-dc-power/
@@ -631,6 +705,7 @@ ac-dc-power-supply/
 ### Git 不可用
 
 如果系统中未安装 git，CLI 会跳过 git 初始化并提示：
+
 ```
 Git 未找到，已跳过仓库初始化。你可以稍后手动执行 `git init` 创建仓库。
 ```
@@ -638,11 +713,13 @@ Git 未找到，已跳过仓库初始化。你可以稍后手动执行 `git init
 ### 多平台配置冲突
 
 如检测到 `.claude/` 和 `.qwen/` 同时存在，CLI 会报错：
+
 ```
 检测到多个 AI 平台配置(.claude/ 和 .qwen/ 同时存在)，请手工删除其中一个后重试
 ```
 
 **解决方案**：
+
 1. 确定要使用的平台（claude 或 qwen）
 2. 删除另一个平台的目录：
    ```bash
@@ -657,6 +734,7 @@ Git 未找到，已跳过仓库初始化。你可以稍后手动执行 `git init
 ### 非空目录
 
 如在非空目录（包含 ElecSpeckit 以外的文件）中执行初始化，CLI 会报错：
+
 ```
 当前目录包含非 ElecSpeckit 文件，ElecSpeckit 只能在空目录或已有的 ElecSpeckit 项目目录中初始化/升级
 ```
@@ -750,7 +828,8 @@ limitations under the License.
 ## 反馈与贡献
 
 如遇到问题或有建议，欢迎通过以下方式反馈：
+
 - **GitHub Issues**: https://github.com/toponex/elecspeckit-cli/issues
-- **Email**: yongkai.li@example.com
+- **Email**: lyk0510abc@gmail.com
 
 我们欢迎社区贡献！详见 [CONTRIBUTING.md](CONTRIBUTING.md)（如有）。
