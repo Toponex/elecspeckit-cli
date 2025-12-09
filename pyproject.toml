@@ -42,9 +42,9 @@ dev = [
 elecspeckit = "elecspeckit_init.cli:app"
 
 [project.urls]
-Homepage = "https://github.com/toponex/elecspeckit-cli"
-Documentation = "https://github.com/toponex/elecspeckit-cli"
-Repository = "https://github.com/toponex/elecspeckit-cli"
+Homepage = "https://github.com/Toponex/elecspeckit-cli"
+Documentation = "https://github.com/Toponex/elecspeckit-cli"
+Repository = "https://github.com/Toponex/elecspeckit-cli"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/elecspeckit_init"]
