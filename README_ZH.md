@@ -93,16 +93,19 @@ git clone https://gitee.com/lyk0510/elecspeckit-cli.git
 
 ## 安装
 
-使用 `uv` 工具安装（推荐）：
+克隆仓库并从源代码安装：
 
 ```bash
-uv tool install elecspeckit-cli
-```
+# 从 GitHub 克隆
+git clone https://github.com/Toponex/elecspeckit-cli.git
+cd elecspeckit-cli
 
-或使用 `pip`：
+# 或从 Gitee 克隆（推荐国内用户）
+git clone https://gitee.com/lyk0510/elecspeckit-cli.git
+cd elecspeckit-cli
 
-```bash
-pip install elecspeckit-cli
+# 使用 uv 安装
+uv tool install .
 ```
 
 ## 快速开始
