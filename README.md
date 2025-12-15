@@ -187,6 +187,102 @@ Generate checklists based on `tasks.md` to ensure all tasks are verified.
 
 Comprehensive analysis of `spec.md`, `plan.md`, `tasks.md`, and `constitution.md`, outputting structured report identifying inconsistencies, gaps, and conflicts.
 
+### Skills Configuration Management (Claude Code Only)
+
+#### `/elecspeckit.skillconfig` - Manage Claude Skills
+
+Manage deployed Claude Skills' enable/disable status, API key configuration, and consistency validation.
+
+**Note**: This command is only available on Claude Code platform. Qwen Code does not support Skills functionality.
+
+**Subcommands**:
+
+##### `list` - List All Skills
+```bash
+/elecspeckit.skillconfig list [--format json|text]
+```
+
+Display all deployed Skills and their status (enabled/disabled, API configuration).
+
+**Example output**:
+```
+Deployed Claude Skills (24 total):
+
+Status  Skill Name                    API Req  API Config  Description
+==================================================================
+[✓]     docs-seeker                   No       N/A         Find technical docs
+[✗]     mouser-component-search       Yes      Unconfigured Mouser API integration
+[✓]     arxiv-search                  No       N/A         Search academic papers
+...
+
+Statistics:
+  - Enabled: 20
+  - Disabled: 4
+  - Requires API: 3 (1 unconfigured)
+```
+
+##### `enable` - Enable Skill
+```bash
+/elecspeckit.skillconfig enable <skill_name>
+```
+
+Set specified Skill to enabled state, allowing Claude Code to load it.
+
+**Example**:
+```bash
+/elecspeckit.skillconfig enable arxiv-search
+```
+
+##### `disable` - Disable Skill
+```bash
+/elecspeckit.skillconfig disable <skill_name>
+```
+
+Set specified Skill to disabled state, preventing Claude Code from loading it.
+
+**Use Cases**:
+- Temporarily disable unneeded Skills to improve loading speed
+- Disable Skills requiring API keys that haven't been configured yet
+
+##### `update` - Update API Key
+```bash
+/elecspeckit.skillconfig update <skill_name> --api-key <key>
+```
+
+Update API key configuration for Skills requiring external APIs (e.g., `mouser-component-search`).
+
+**Example**:
+```bash
+/elecspeckit.skillconfig update mouser-component-search --api-key "YOUR_MOUSER_API_KEY"
+```
+
+**Security Notes**:
+- API keys are stored in `.elecspecify/memory/skill_config.json` with file permission 0600
+- Python scripts execute server-side, keys are not passed to LLM context
+- SKILL.md files contain only placeholder examples, never actual keys
+
+##### `validate` - Validate Configuration Consistency
+```bash
+/elecspeckit.skillconfig validate
+```
+
+Validate consistency between `skill_config.json` and actual SKILL.md files in `.claude/skills/` directory.
+
+**Complete Workflow Example**:
+```bash
+# 1. View current Skills status
+/elecspeckit.skillconfig list
+
+# 2. Configure Mouser API key
+/elecspeckit.skillconfig update mouser-component-search --api-key "YOUR_KEY"
+
+# 3. Enable mouser-component-search Skill
+/elecspeckit.skillconfig enable mouser-component-search
+
+# 4. Validate configuration consistency
+/elecspeckit.skillconfig validate
+```
+
 ## Upgrading Existing Projects
 
 In an already initialized ElecSpeckit project, re-run initialization to update templates:
@@ -209,6 +305,30 @@ The upgrade process will:
   - ✅ Business docs under `specs/` won't be modified
   - ✅ `.elecspecify/memory/constitution.md` won't be overwritten (unless `--reset`)
   - ✅ Files with identical content will be skipped
+
+### Upgrading from v0.1.0 to v0.2.0
+
+When upgrading from v0.1.0:
+
+1. **Automatic Detection and Backup**:
+   - Running `elecspeckit init` automatically detects v0.1.0 projects
+   - Old kb_config configuration files are automatically backed up to `.elecspecify/backup/`
+
+2. **Claude Skills Auto-Deployment**:
+   - When selecting Claude Code platform, 23+ Skills are automatically deployed to `.claude/skills/`
+   - Generates `.elecspecify/memory/skill_config.json` configuration file
+
+3. **Configure API Keys** (optional):
+   ```bash
+   /elecspeckit.skillconfig update mouser-component-search --api-key "YOUR_KEY"
+   /elecspeckit.skillconfig enable mouser-component-search
+   ```
+
+4. **Verify Upgrade**:
+   ```bash
+   /elecspeckit.skillconfig list
+   /elecspeckit.skillconfig validate
+   ```
 
 ### Reset constitution.md
 
@@ -233,6 +353,50 @@ Detected multiple AI platform configs (.claude/ and .qwen/ both exist), please m
 ```
 
 **Solution**: Delete one platform directory, then re-run `elecspeckit init`.
+
+## Version History
+
+### v0.2.0 (Current Version)
+
+**Major Changes**:
+- ✨ **Claude Skills Support**: Claude Code platform now supports 23+ professional Skills stored in `.claude/skills/` directory
+- 🔄 **Removed kb_config Mechanism**: Old `knowledge-sources.json` and `/elecspeckit.kbconfig` commands replaced by Claude Skills
+- 📦 **Skills Auto-Deployment**: Automatically deploy Skills for information retrieval, document generation, data analysis, and embedded development when initializing Claude projects
+- ⚙️ **New `/elecspeckit.skillconfig` Command**: Manage Skills enable/disable and API key configuration
+- 🔒 **Enhanced Security**: API keys stored in permission-restricted `skill_config.json` file (owner read-only)
+
+**Skills Categories**:
+- **Information Retrieval (5)**: docs-seeker, arxiv-search, web-research, perplexity-search, openalex-database
+- **Document Generation & Visualization (7)**: docx, pdf, xlsx, pptx, architecture-diagrams, mermaid-tools, docs-write
+- **Data Analysis (2)**: hardware-data-analysis, citation-management
+- **Embedded Development (4)**: embedded-systems, hardware-protocols, esp32-embedded-dev, embedded-best-practices
+- **Component Procurement (1)**: mouser-component-search
+- **Domain Analysis (3)**: circuit-commutation-analysis, thermal-simulation, emc-analysis (placeholder)
+- **Meta Skill (1)**: skill-creator
+
+**Upgrade Notes**:
+- v0.1.0 projects will have old kb_config configurations automatically backed up to `.elecspecify/backup/`
+- After upgrade, use `/elecspeckit.skillconfig` to manage Skills (no manual configuration needed)
+
+**Known Issues** (to be resolved in v0.2.1):
+- Python scripts for some Skills (mouser-component-search, perplexity-search) not fully implemented
+- Some Skills' SKILL.md missing ElecSpeckit integration guide section
+- esp32-embedded-dev and hardware-protocols SKILL.md format incomplete
+
+See [CHANGELOG.md](CHANGELOG.md) for detailed release notes.
+
+---
+
+### v0.1.0
+
+Initial release with core specification-driven workflow:
+- Project initialization with platform selection (Claude Code / Qwen Code)
+- 15 workflow commands for hardware project management
+- Role-based document generation (7 views)
+- Knowledge sources configuration (replaced by Skills in v0.2.0)
+- Hardware-appropriate testing classification (L1/L2/L3)
+
+
 
 ## License
 
