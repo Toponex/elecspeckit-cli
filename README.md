@@ -21,7 +21,7 @@ ElecSpeckit Solutions:
 - ✅ **AI-Assisted Requirement Clarification**: `/elecspeckit.clarify` auto-discovers spec ambiguities with multiple-choice Q&A
 - ✅ **Structured Architecture Decisions**: `/elecspeckit.plan` guides Phase 0 research (topology selection, component selection) with traceable rationale
 - ✅ **Auto-Generated Role Views**: One `tasks.md` auto-generates 7 role-specific views (HW/BOM/Test/FA/PM/Datasheet/KB) with zero sync latency
-- ✅ **Unified Knowledge Source Config**: `/elecspeckit.kbconfig` manages all external sources (IPC standards, company KB, reference designs)
+- ✅ **Claude Skills Integration**: Claude Code platform supports 23+ specialized Skills for component search, standards query, and design validation (Qwen platform has limited skill support)
 - ✅ **Document Consistency Check**: `/elecspeckit.analyze` auto-detects inconsistencies between spec/plan/tasks, verifying requirement coverage, constitution alignment, and terminology consistency
 
 ## ⚠️ Important Notice
@@ -49,14 +49,15 @@ Each feature (e.g., "AC-DC Power Module", "CAN Communication Interface") corresp
 - `tasks.md` - Task breakdown (with `[VIEW:XXX]` tags for different roles)
 - `docs/` - Auto-generated 7 role-specific view documents
 
-### 3. Knowledge Sources Configuration
+### 3. Claude Skills (Claude Code Only)
 
-Stored in `.elecspecify/memory/knowledge-sources.json`, supports 4 types:
+Claude Code platform provides 23+ specialized Skills (stored in `.claude/skills/`):
 
-- **standards**: Industry standards (e.g., IPC-2221B PCB design standard)
-- **company_kb**: Company knowledge base (design guidelines, FA reports)
-- **reference_designs**: Reference designs (TI, ADI eval boards)
-- **web**: Online knowledge bases (e.g., Metaso academic search, Volces Q&A)
+- **Component Search**: Query Mouser, Digikey, LCSC, ICkey for component availability and pricing
+- **Standards Query**: Access local IPC/ISO standards and reference designs
+- **Design Validation**: Automated checks against project constitution and industry best practices
+
+**Note**: Qwen Code platform does not support Skills functionality. Some advanced features (automatic knowledge base queries, document discovery) will be unavailable on Qwen platform.
 
 ### 4. Role-Based Views
 
@@ -104,7 +105,8 @@ elecspeckit init
 
 Interactive platform selection:
 
-- **Claude Code** or **Qwen Code**
+- **Claude Code (recommended)** - Full Skills support with 23+ specialized tools
+- **Qwen Code** - Basic functionality, limited Skills support
 
 Non-interactive initialization (for CI/CD):
 
@@ -116,12 +118,11 @@ elecspeckit init --platform claude
 
 In Claude Code or Qwen Code, execute commands in this recommended order:
 
-1. **`/elecspeckit.kbconfig`** - Verify and configure external knowledge sources
-2. **`/elecspeckit.constitution`** - Supplement project constraints and design principles
-3. **`/elecspeckit.specify <feature-description>`** - Generate feature specification (spec.md)
-4. **`/elecspeckit.plan`** - Generate architecture design (plan.md, research.md, data-model.md)
-5. **`/elecspeckit.tasks`** - Generate task breakdown (tasks.md)
-6. **`/elecspeckit.docs`** - Generate all 7 role-specific views
+1. **`/elecspeckit.constitution`** - Define project constraints and design principles
+2. **`/elecspeckit.specify <feature-description>`** - Generate feature specification (spec.md)
+3. **`/elecspeckit.plan`** - Generate architecture design (plan.md, research.md, data-model.md)
+4. **`/elecspeckit.tasks`** - Generate task breakdown (tasks.md)
+5. **`/elecspeckit.docs`** - Generate all 7 role-specific views
 
 Optional quality improvement commands:
 
@@ -136,10 +137,6 @@ Optional quality improvement commands:
 #### `/elecspeckit.constitution` - Maintain Project Constitution
 
 Create or update project-level design principles and constraints as guidelines for all feature specs.
-
-#### `/elecspeckit.kbconfig` - Configure External Knowledge Sources
-
-Manage knowledge sources including industry standards, company KB, reference designs, and online knowledge bases.
 
 ### Spec & Architecture Commands (P1 Core Workflow)
 

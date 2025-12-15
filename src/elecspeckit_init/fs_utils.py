@@ -226,3 +226,89 @@ def is_elecspeckit_project(path: Path) -> bool:
 
     # 必须有 .elecspecify/ 且至少有一个平台目录
     return elecspecify_dir.exists() and (claude_dir.exists() or qwen_dir.exists())
+
+
+def copy_skills_directory(
+    source_dir: Path, target_dir: Path, overwrite: bool = False, create_backup: bool = False
+) -> ChangeSummary:
+    """
+    复制 Skills 目录树（T006）
+
+    专门用于复制 Skills 目录，包含所有 SKILL.md、Python 脚本、references/、assets/ 等子目录。
+
+    Args:
+        source_dir: 源 Skills 目录
+        target_dir: 目标 Skills 目录
+        overwrite: 是否覆盖已存在文件
+        create_backup: 覆盖时是否创建备份
+
+    Returns:
+        ChangeSummary 包含所有文件变更记录
+
+    Raises:
+        FileNotFoundError: 源目录不存在
+        PermissionError: 无写权限
+
+    Examples:
+        >>> summary = copy_skills_directory(
+        ...     Path("templates/skills"),
+        ...     Path(".claude/skills"),
+        ...     overwrite=False
+        ... )
+        >>> print(f"已创建 {summary.total_created} 个文件")
+    """
+    # 确保目标目录存在（即使源目录为空）
+    ensure_directory_exists(target_dir)
+
+    # 复用现有的 copy_directory_tree 函数
+    return copy_directory_tree(source_dir, target_dir, overwrite, create_backup)
+
+
+def backup_directory_with_timestamp(
+    source_dir: Path, backup_base_dir: Path, prefix: str = "backup"
+) -> Path:
+    """
+    备份目录到指定位置，使用时间戳命名（T007）
+
+    备份文件名格式: {prefix}.YYYYMMDD-HHMMSS
+
+    Args:
+        source_dir: 要备份的源目录
+        backup_base_dir: 备份基础目录（如 .elecspecify/backup/）
+        prefix: 备份文件名前缀（如 "skills.bak"）
+
+    Returns:
+        Path: 备份目录的完整路径
+
+    Raises:
+        FileNotFoundError: 源目录不存在
+        PermissionError: 无写权限
+
+    Examples:
+        >>> backup_path = backup_directory_with_timestamp(
+        ...     Path(".claude/skills"),
+        ...     Path(".elecspecify/backup"),
+        ...     prefix="skills.bak"
+        ... )
+        >>> print(backup_path)  # .elecspecify/backup/skills.bak.20251214-153045
+    """
+    if not source_dir.exists():
+        raise FileNotFoundError(f"源目录不存在: {source_dir}")
+
+    if not source_dir.is_dir():
+        raise ValueError(f"源路径不是目录: {source_dir}")
+
+    # 生成时间戳 YYYYMMDD-HHMMSS
+    from datetime import datetime
+
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    backup_dir_name = f"{prefix}.{timestamp}"
+    backup_path = backup_base_dir / backup_dir_name
+
+    # 确保备份基础目录存在
+    ensure_directory_exists(backup_base_dir)
+
+    # 执行完整目录复制
+    shutil.copytree(source_dir, backup_path, dirs_exist_ok=False)
+
+    return backup_path

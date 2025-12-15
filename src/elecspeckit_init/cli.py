@@ -164,6 +164,13 @@ def _init_new_project(
                 "message": f"无效的平台参数: {platform}, 仅支持 'claude' 或 'qwen'",
             }
 
+    # 显示 Qwen 平台警告信息 (T022, 符合 SC-008.2 双语格式)
+    if platform == "qwen" and not json_output:
+        console.print(
+            "[yellow]注意:[/yellow] Qwen 平台不支持 Claude Skills 功能，"
+            "部分高级特性（如知识库自动查询、文档发现）将不可用\n"
+        )
+
     # 初始化项目结构
     try:
         summary = initialize_project_structure(base_dir, platform, create_backup=False)
@@ -193,6 +200,53 @@ def _init_new_project(
         return result
     except Exception as e:
         return {"status": "error", "message": f"初始化失败: {e}"}
+
+
+def detect_version_upgrade(base_dir: Path) -> dict:
+    """
+    检测项目是否需要版本升级 (T010)
+
+    检测 v0.1.0 项目通过以下特征文件（按优先级顺序, per A8澄清）：
+    1. .claude/commands/elecspeckit.kbconfig.md
+    2. .qwen/commands/elecspeckit.kbconfig.toml
+    3. .elecspecify/memory/knowledge-sources.json
+
+    Args:
+        base_dir: 项目根目录
+
+    Returns:
+        dict: {
+            "is_upgrade": bool,          # 是否为升级路径
+            "from_version": str | None,  # 源版本（如 "v0.1.0"）
+            "trigger_file": str | None,  # 触发升级的特征文件（相对路径）
+        }
+
+    Examples:
+        >>> result = detect_version_upgrade(Path.cwd())
+        >>> if result["is_upgrade"]:
+        ...     print(f"检测到从 {result['from_version']} 升级")
+    """
+    # 检测 v0.1.0 特征文件（按优先级顺序）
+    v010_features = [
+        base_dir / ".claude" / "commands" / "elecspeckit.kbconfig.md",
+        base_dir / ".qwen" / "commands" / "elecspeckit.kbconfig.toml",
+        base_dir / ".elecspecify" / "memory" / "knowledge-sources.json",
+    ]
+
+    for feature_file in v010_features:
+        if feature_file.exists():
+            return {
+                "is_upgrade": True,
+                "from_version": "v0.1.0",
+                "trigger_file": str(feature_file.relative_to(base_dir)),
+            }
+
+    # 未检测到任何升级特征
+    return {
+        "is_upgrade": False,
+        "from_version": None,
+        "trigger_file": None,
+    }
 
 
 def _upgrade_existing_project(

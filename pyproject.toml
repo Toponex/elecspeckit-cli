@@ -22,12 +22,30 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
+    # CLI 核心依赖
     "typer>=0.9.0,<1.0",
     "rich>=13.0.0,<14.0",
     "readchar>=4.0.0,<5.0",
     "httpx[socks]>=0.25.0,<1.0",
     "platformdirs>=3.0.0,<5.0",
     "truststore>=0.10.4,<1.0",
+    # 核心科学计算库 (FR-015)
+    "numpy>=1.24.0",
+    "scipy>=1.10.0",
+    "pandas>=2.0.0",
+    "matplotlib>=3.7.0",
+    # 文档处理库 (FR-015)
+    "python-docx>=0.8.11",
+    "PyPDF2>=3.0.0",
+    "openpyxl>=3.1.0",
+    "python-pptx>=0.6.21",
+    # 网络与API库 (FR-015)
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.0",
+    "litellm>=1.0.0",
+    "pyalex>=0.13",
+    "pypuppeteer>=1.0.0",
+    "arxiv>=2.0.0",
 ]
 
 [project.optional-dependencies]
@@ -36,6 +54,12 @@ dev = [
     "pytest-cov>=4.0.0",
     "ruff>=0.1.0",
     "black>=23.0.0",
+]
+# 嵌入式开发可选依赖 (T003.1, FR-015)
+# 安装方式: uv tool install .[embedded]
+embedded = [
+    "pyserial>=3.5",
+    "esptool>=4.5",
 ]
 
 [project.scripts]
@@ -59,11 +83,19 @@ include = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+# 测试目录指向根目录的版本化测试结构（参见 spec.md 测试目录结构说明）
+testpaths = ["../../tests/v0.2.0"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = "--strict-markers --tb=short"
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "contract: Contract/API tests",
+    "perf: Performance tests",
+    "slow: Slow running tests",
+]
 
 [tool.coverage.run]
 source = ["src"]

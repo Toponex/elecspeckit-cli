@@ -1,0 +1,142 @@
+{
+  "version": "0.2.0",
+  "platform": "claude",
+  "skills": {
+    "information_retrieval": {
+      "docs-seeker": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "搜索和定位项目文档、技术规格书、数据手册"
+      },
+      "arxiv-search": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "搜索学术论文和研究文献"
+      },
+      "web-research": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "执行结构化网络研究任务"
+      },
+      "perplexity-search": {
+        "enabled": true,
+        "requires_api": true,
+        "api_key": "",
+        "description": "使用 Perplexity AI 进行高级搜索"
+      },
+      "openalex-database": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "查询 OpenAlex 学术数据库"
+      }
+    },
+    "document_generation": {
+      "docx": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "生成 Microsoft Word 文档"
+      },
+      "pdf": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "生成 PDF 文档"
+      },
+      "xlsx": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "生成和编辑 Excel 电子表格"
+      },
+      "pptx": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "生成 PowerPoint 演示文稿"
+      },
+      "architecture-diagrams": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "生成系统架构图和技术图表"
+      },
+      "mermaid-tools": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "创建 Mermaid 流程图和序列图"
+      },
+      "docs-write": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "编写和格式化技术文档"
+      }
+    },
+    "data_analysis": {
+      "hardware-data-analysis": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "分析硬件测试数据和性能指标"
+      },
+      "citation-management": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "管理文献引用和参考文献"
+      }
+    },
+    "embedded_systems": {
+      "embedded-systems": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "嵌入式系统开发指导和最佳实践"
+      },
+      "hardware-protocols": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "硬件通信协议支持 (I2C, SPI, UART, CAN等)"
+      },
+      "esp32-embedded-dev": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "ESP32 开发和调试支持"
+      },
+      "embedded-best-practices": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "嵌入式开发最佳实践和设计模式"
+      }
+    },
+    "component_search": {
+      "mouser-component-search": {
+        "enabled": true,
+        "requires_api": true,
+        "api_key": "",
+        "description": "搜索 Mouser 电子元器件库存和价格"
+      }
+    },
+    "domain_analysis": {
+      "circuit-commutation-analysis": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "电路拓扑和换流分析"
+      },
+      "thermal-simulation": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "热仿真和散热设计"
+      },
+      "emc-analysis": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "电磁兼容性分析和设计指导"
+      }
+    },
+    "meta": {
+      "skill-creator": {
+        "enabled": true,
+        "requires_api": false,
+        "description": "创建和管理自定义 Claude Skills"
+      }
+    }
+  },
+  "notes": {
+    "api_keys": "需要 API 密钥的 Skills 需要在相应字段填写密钥才能使用",
+    "skills_directory": ".claude/skills/ 目录包含所有 Skills 的实现文件",
+    "upgrade_notice": "从 v0.1.0 升级时,此文件将自动生成以替代 knowledge-sources.json"
+  }
+}

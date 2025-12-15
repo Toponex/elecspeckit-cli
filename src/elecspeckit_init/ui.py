@@ -40,6 +40,18 @@ class InteractiveSelector:
     def __init__(self, console: Optional[Console] = None):
         self.console = console or Console()
 
+    def get_platform_options(self) -> List[dict]:
+        """
+        获取平台选项列表（用于测试）
+
+        Returns:
+            包含 label 和 value 的选项字典列表
+        """
+        return [
+            {"label": "Claude Code (recommended)", "value": "claude"},
+            {"label": "Qwen Code", "value": "qwen"},
+        ]
+
     def select_platform(self, title: str = "选择 AI 平台") -> Optional[str]:
         """
         平台选择界面
@@ -53,7 +65,7 @@ class InteractiveSelector:
         options = [
             SelectOption(
                 value="claude",
-                label="Claude Code",
+                label="Claude Code (recommended)",
                 description="Anthropic Claude AI 驱动的代码助手平台",
             ),
             SelectOption(

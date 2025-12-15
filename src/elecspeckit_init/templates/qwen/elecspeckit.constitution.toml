@@ -7,25 +7,14 @@ Goal
 在具体硬件项目中，为当前仓库建立一份“项目级 ElecSpeckit 宪法”，说明该项目在库优先、CLI 优先、TDD、可观察性、中文本地化，以及本领域安全/性能/合规等方面的基本规则，为后续 /elecspeckit.specify、/elecspeckit.plan、/elecspeckit.tasks 提供共同约束。
 
 How engineers typically use this
-- 工程师首先在一个空目录中执行 `elecspeckit --init`，生成 `.elecspecify/memory/constitution.md` 与 `knowledge-sources.json` 的初始模板，以及 `.elecspecify/scripts/` 下的占位脚本；如后续仅需重置宪法模板，可在同一目录下执行 `elecspeckit --reset-constitution`；
-- 然后在同一目录作为工作区打开 Qwen Code，按顺序运行：
-  - `/elecspeckit.kbconfig`：先把 `.elecspecify/memory/knowledge-sources.json` 中的 `[在此…]` 占位条目替换为项目真实的标准/公司知识库/参考设计/web 信息源；
-  - `/elecspeckit.constitution {可选补充说明}`：在知识源配置通过校验后，再逐步补充/修订宪法条款；
+- 工程师首先在一个空目录中执行 `elecspeckit --init`，生成 `.elecspecify/memory/constitution.md` 的初始模板；如后续仅需重置宪法模板，可在同一目录下执行 `elecspeckit --reset-constitution`；
+- 然后在同一目录作为工作区打开 Qwen Code，运行 `/elecspeckit.constitution {可选补充说明}`：逐步补充/修订宪法条款；
 - 命令不要求用户一次性写出完整宪法，而是：
   - 自动加载当前 `.elecspecify/memory/constitution.md` 内容；
   - 结合少量问题逐步补充/修订条款；
-  - 在需要时提示如何“仅更新模板”或“在后续步骤中更新 spec/plan/tasks/docs”，而不是直接覆盖业务文档。
+  - 在需要时提示如何"仅更新模板"或"在后续步骤中更新 spec/plan/tasks/docs"，而不是直接覆盖业务文档。
 
 Execution Steps (for the AI assistant)
-0. 先对知识源配置做门禁检查：
-   - 固定使用 `KB_PATH = .elecspecify/memory/knowledge-sources.json` 和 `KB_VALIDATE_SCRIPT = .elecspecify/scripts/kbconfig_validate.py`；
-   - 调用：
-     ```text
-     python .elecspecify/scripts/kbconfig_validate.py --kb .elecspecify/memory/knowledge-sources.json
-     ```
-   - 解析脚本输出的 JSON（例如 `{"status": "ok"}` 或 `{"status": "invalid", "reasons": [...]}`）：
-     - 若 `status != "ok"`，必须向工程师解释当前 `knowledge-sources.json` 仍未配置完成（例如仍包含 `[在此…]` 占位条目），提示先运行 `/elecspeckit.kbconfig` 完成知识源配置，然后结束本次 `/elecspeckit.constitution` 流程，不继续修改宪法；
-     - 只有当 `status == "ok"` 时，才可以继续后续步骤。
 1. 在目标项目根目录工作，**固定使用** `.elecspecify/memory/constitution.md` 作为宪法文件路径：
    - 设定 `CONSTITUTION_PATH = .elecspecify/memory/constitution.md`；
    - 如果该文件不存在或无法读取，先提醒用户需要在当前目录运行 `elecspeckit --init`（或在已存在 ElecSpeckit 项目中执行 `elecspeckit --reset-constitution`）生成或重置初始模板，然后结束本次指令。
@@ -50,11 +39,10 @@ Execution Steps (for the AI assistant)
    - 如用户回复“stop/够了/先这样”，立即停止提问，结束本次运行；
    - 否则应持续提问，直到当前会话中已识别的重要 [CLARIFY] 问题都得到明确回答，而不是简单问满固定数量后就停止。
 6. 将更新后的完整宪法内容写回 `CONSTITUTION_PATH`（`.elecspecify/memory/constitution.md`），并用简短列表总结本轮新增的关键规则（例如“安全优先”“必须为核心模块编写集成测试”等）。
-7. 根据更新后的宪法内容，判断是否对 ElecSpeckit 模板、知识源配置与文档结构产生影响，并与用户确认下一步：
-   - 选项 A：“仅更新模板”——在对话中列出需要调整的 `.elecspecify/templates/*` 文件和建议修改点，引导用户在模板层面完成约束对齐；
-   - 选项 B：“审查/更新知识源配置”——根据最新宪法中的“外部知识与 web 信息源约定”章节，与工程师一起检查 `.elecspecify/memory/knowledge-sources.json` 是否需要调整（例如是否启用 web、推荐结果数量区间、是否需要新增或移除某些 sources 条目），并在需要时建议工程师重新运行 `/elecspeckit.kbconfig` 或手工编辑该文件；
-   - 选项 C：“在后续步骤中审查/更新 spec/plan/tasks/docs”——提示用户在完成模板与知识源配置更新后，通过 /elecspeckit.plan、/elecspeckit.tasks、/elecspeckit.docs 分别对现有特性文档进行审查和增量更新；
-   - 无论用户选择哪一项，本命令 **不得直接修改** 任何 `spec/plan/tasks/docs` 文件，只能对 `.elecspecify/memory/constitution.md` 给出建议或执行更新，并通过自然语言建议工程师如何维护 `.elecspecify/memory/knowledge-sources.json` 与 `.elecspecify/templates/*`。
+7. 根据更新后的宪法内容，判断是否对 ElecSpeckit 模板与文档结构产生影响，并与用户确认下一步：
+   - 选项 A："仅更新模板"——在对话中列出需要调整的 `.elecspecify/templates/*` 文件和建议修改点，引导用户在模板层面完成约束对齐；
+   - 选项 B："在后续步骤中审查/更新 spec/plan/tasks/docs"——提示用户在完成模板更新后，通过 /elecspeckit.plan、/elecspeckit.tasks、/elecspeckit.docs 分别对现有特性文档进行审查和增量更新；
+   - 无论用户选择哪一项，本命令 **不得直接修改** 任何 `spec/plan/tasks/docs` 文件，只能对 `.elecspecify/memory/constitution.md` 给出建议或执行更新，并通过自然语言建议工程师如何维护 `.elecspecify/templates/*`。
 
 Notes
 - 宪法文件应尽量短小但明确，避免把细节设计塞进宪法；细节应放在各特性的 spec/plan 中。

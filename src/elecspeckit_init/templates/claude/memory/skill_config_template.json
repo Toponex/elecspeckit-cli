@@ -1,0 +1,121 @@
+{
+  "skills": {
+    "docs-seeker": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "查找技术文档（芯片数据手册、标准文档）"
+    },
+    "arxiv-search": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "搜索学术论文（电源拓扑、EMC设计理论）"
+    },
+    "web-research": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "一般性网络研究（供应商信息、应用笔记）"
+    },
+    "perplexity-search": {
+      "enabled": false,
+      "requires_api": true,
+      "api_key": "",
+      "description": "高级网络搜索（需要 Perplexity API key）"
+    },
+    "openalex-database": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "学术数据库查询（电气工程期刊）"
+    },
+    "docx": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "Word文档生成（硬件设计文档、技术规格书、BOM表）"
+    },
+    "pdf": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "PDF处理（数据手册提取、测试报告生成）"
+    },
+    "xlsx": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "Excel处理（BOM管理、测试数据分析）"
+    },
+    "pptx": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "PowerPoint处理（设计评审演示）"
+    },
+    "architecture-diagrams": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "绘制硬件架构图（Mermaid/PlantUML）"
+    },
+    "mermaid-tools": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "Mermaid 图表生成工具"
+    },
+    "docs-write": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "生成硬件技术文档（datasheet、测试报告）"
+    },
+    "hardware-data-analysis": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "硬件测试数据分析（效率曲线、温度漂移）"
+    },
+    "citation-management": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "学术引用管理"
+    },
+    "embedded-systems": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "嵌入式系统专家（微控制器编程、RTOS开发）"
+    },
+    "hardware-protocols": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "硬件通信协议（MQTT, I2C, SPI, UART, BLE, WiFi）"
+    },
+    "esp32-embedded-dev": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "ESP32开发（ESP-IDF、FreeRTOS、WiFi/BLE网络）"
+    },
+    "embedded-best-practices": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "嵌入式最佳实践"
+    },
+    "mouser-component-search": {
+      "enabled": false,
+      "requires_api": true,
+      "api_key": "",
+      "description": "Mouser API集成（元器件搜索、库存查询、定价）"
+    },
+    "circuit-commutation-analysis": {
+      "enabled": false,
+      "requires_api": false,
+      "description": "分析电力电子电路的换流过程（占位实现）"
+    },
+    "thermal-simulation": {
+      "enabled": false,
+      "requires_api": false,
+      "description": "热仿真评估（占位实现）"
+    },
+    "emc-analysis": {
+      "enabled": false,
+      "requires_api": false,
+      "description": "EMC 设计分析（占位实现）"
+    },
+    "skill-creator": {
+      "enabled": true,
+      "requires_api": false,
+      "description": "元 Skill，指导用户创建自定义硬件专用 Skills"
+    }
+  }
+}

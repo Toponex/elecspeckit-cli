@@ -21,7 +21,7 @@ ElecSpeckit 的解决方案：
 - ✅ **AI 辅助澄清需求**：通过 `/elecspeckit.clarify` 自动发现规格中的模糊点，以选择题形式快速澄清
 - ✅ **结构化架构决策**：`/elecspeckit.plan` 引导完成 Phase 0 研究（如拓扑选择、器件选型），并在 `research.md` 中记录决策依据
 - ✅ **自动生成角色视图**：一份 `tasks.md` 自动生成 HW/BOM/Test/FA/PM 等 7 个角色专属视图，信息同步零延迟
-- ✅ **统一知识源配置**：`/elecspeckit.kbconfig` 管理所有外部知识源（IPC 标准、公司知识库、参考设计），一键查询
+- ✅ **Claude Skills 集成**：Claude Code 平台支持 23+ 专业 Skills，用于元器件搜索、标准查询和设计验证（Qwen 平台功能受限）
 - ✅ **文档一致性检查**：`/elecspeckit.analyze` 自动检测 spec/plan/tasks 之间的不一致，验证需求覆盖、宪法对齐和术语一致性
 
 ## ⚠️ 重要提示
@@ -51,16 +51,15 @@ ElecSpeckit 通过代码规则约束 AI 输出，但受限于 Transformer 架构
 - `tasks.md` - 任务拆解（带 `[VIEW:XXX]` 标记分配给不同角色）
 - `docs/` - 自动生成的 7 个角色视图文档
 
-### 3. 知识源配置 (Knowledge Sources)
+### 3. Claude Skills（仅限 Claude Code）
 
-存储在 `.elecspecify/memory/knowledge-sources.json`，支持 4 类知识源：
+Claude Code 平台提供 23+ 专业 Skills（存储在 `.claude/skills/`）：
 
-- **standards**: 行业标准（如 IPC-2221B PCB设计标准）
-- **company_kb**: 公司知识库（设计指南、失效分析报告）
-- **reference_designs**: 参考设计（TI、ADI 等厂商的评估板）
-- **web**: 在线知识库（如 Metaso 学术搜索、Volces 问答）
+- **元器件搜索**：查询 Mouser、Digikey、立创商城、立创EDA 等平台的元器件库存和价格
+- **标准查询**：访问本地 IPC/ISO 标准和参考设计文档
+- **设计验证**：根据项目宪法和行业最佳实践进行自动化检查
 
-**使用场景**：在 `/elecspeckit.plan` 做拓扑选择时，AI 会自动查询配置的参考设计和标准；在 `/elecspeckit.specify` 澄清需求时，会引用相关行业标准。
+**注意**：Qwen Code 平台不支持 Skills 功能。某些高级特性（如自动知识库查询、文档发现）在 Qwen 平台上将不可用。
 
 ### 4. 角色视图 (Role-based Views)
 
@@ -156,12 +155,15 @@ elecspeckit init
 **交互式选择 AI 平台**：
 
 ```
-ElecSpeckit CLI v0.1.0
+ElecSpeckit CLI v0.2.0
 
 请选择 AI 平台 (使用 ↑/↓ 方向键导航，Enter 确认，Esc 取消):
-  > Claude Code
+  > Claude Code (recommended)
     Qwen Code
 ```
+
+- **Claude Code (recommended)** - 完整 Skills 支持，包含 23+ 专业工具
+- **Qwen Code** - 基础功能，Skills 支持受限
 
 **非交互式初始化**（用于 CI/CD）：
 
@@ -248,37 +250,6 @@ elecspeckit init --no-git
 ```
 
 **输出**：更新后的 `constitution.md`，包含新增条款。
-
----
-
-#### `/elecspeckit.kbconfig` - 配置外部知识源
-
-**用途**：管理 `.elecspecify/memory/knowledge-sources.json`，添加/更新/删除行业标准、公司知识库、参考设计、在线知识库等外部信息源。
-
-**典型场景**：
-
-- 添加 IPC-2221B PCB 设计标准（本地 PDF 文件）
-- 配置公司内部知识库 API（如 Volces）
-- 添加 TI 参考设计（评估板原理图链接）
-
-**工作流**：
-
-1. AI 读取现有 `knowledge-sources.json`
-2. 根据用户需求调用对应脚本：
-   - `kbconfig_add.py` - 添加新条目
-   - `kbconfig_update.py` - 更新现有条目（如填写 API 密钥）
-   - `kbconfig_list.py` - 列出所有知识源及状态
-   - `kbconfig_delete.py` - 删除条目
-3. 验证配置有效性（`kbconfig_validate.py`）
-4. 写回 JSON 文件
-
-**输入示例**：
-
-```
-/elecspeckit.kbconfig 添加 IPC-2221B 标准，文件路径 F:/Standards/IPC-2221B.pdf
-```
-
-**输出**：更新后的 `knowledge-sources.json`，包含新标准条目。
 
 ---
 
@@ -670,26 +641,22 @@ mkdir ac-dc-power-supply
 cd ac-dc-power-supply
 elecspeckit init --platform claude
 
-# 2. 配置外部知识源（在 Claude Code 中）
-/elecspeckit.kbconfig 添加 IPC-2221B 标准，路径 F:/Standards/IPC-2221B.pdf
-/elecspeckit.kbconfig 添加 TI 参考设计 UCC28700，URL https://www.ti.com/lit/ug/sluu551/sluu551.pdf
-
-# 3. 创建项目宪法
+# 2. 在 Claude Code 中创建项目宪法
 /elecspeckit.constitution 定义可靠性原则：所有电源必须有过流保护和过压保护。成本约束：单机成本不超过¥500
 
-# 4. 生成特性规格
+# 3. 生成特性规格
 /elecspeckit.specify AC-DC电源模块，输入85-265VAC，输出12V/5A，效率>85%，满足IEC 61010-1安全标准
 
-# 5. 澄清模糊需求
+# 4. 澄清模糊需求
 /elecspeckit.clarify
 
-# 6. 生成架构设计
+# 5. 生成架构设计
 /elecspeckit.plan
 
-# 7. 拆解任务
+# 6. 拆解任务
 /elecspeckit.tasks
 
-# 8. 生成各角色视图
+# 7. 生成各角色视图
 /elecspeckit.doc-hw
 /elecspeckit.doc-bom
 /elecspeckit.doc-test
@@ -716,7 +683,7 @@ ac-dc-power-supply/
 └── .elecspecify/
     ├── memory/
     │   ├── constitution.md         # 项目宪法
-    │   └── knowledge-sources.json  # 知识源配置（含 IPC 标准、TI 参考设计）
+    │   └── skill_config.json       # Claude Skills 配置
     └── ...
 ```
 
