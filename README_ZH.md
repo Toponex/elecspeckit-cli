@@ -575,6 +575,104 @@ elecspeckit init --no-git
 
 ---
 
+### 5. Skills 配置管理命令（仅 Claude Code）
+
+#### `/elecspeckit.skillconfig` - 管理 Claude Skills
+
+**用途**：管理已部署的 Claude Skills 的启用/禁用状态、API 密钥配置和一致性验证。
+
+**注意**：此命令仅在 Claude Code 平台可用，Qwen Code 不支持 Skills 功能。
+
+**子命令**：
+
+##### `list` - 列出所有 Skills
+```bash
+/elecspeckit.skillconfig list [--format json|text]
+```
+
+显示所有已部署的 Skills 及其状态（启用/禁用、API 配置）。
+
+**示例输出**：
+```
+已部署的 Claude Skills（共 24 个）:
+
+状态  Skill 名称                     API需求  API配置  描述
+==================================================================
+[✓]   docs-seeker                   否       N/A      查找技术文档
+[✗]   mouser-component-search       是       未配置   Mouser API集成
+[✓]   arxiv-search                  否       N/A      搜索学术论文
+...
+
+统计:
+  - 已启用: 20
+  - 已禁用: 4
+  - 需要 API: 3（其中 1 个未配置）
+```
+
+##### `enable` - 启用 Skill
+```bash
+/elecspeckit.skillconfig enable <skill_name>
+```
+
+将指定 Skill 设为启用状态，使 Claude Code 能够加载该 Skill。
+
+**示例**：
+```bash
+/elecspeckit.skillconfig enable arxiv-search
+```
+
+##### `disable` - 禁用 Skill
+```bash
+/elecspeckit.skillconfig disable <skill_name>
+```
+
+将指定 Skill 设为禁用状态，防止 Claude Code 加载该 Skill。
+
+**使用场景**：
+- 临时禁用不需要的 Skills 以提高加载速度
+- 禁用需要 API 但尚未配置密钥的 Skills
+
+##### `update` - 更新 API 密钥
+```bash
+/elecspeckit.skillconfig update <skill_name> --api-key <key>
+```
+
+更新需要 API 密钥的 Skills（如 `mouser-component-search`）的配置。
+
+**示例**：
+```bash
+/elecspeckit.skillconfig update mouser-component-search --api-key "YOUR_MOUSER_API_KEY"
+```
+
+**安全说明**：
+- API 密钥存储在 `.elecspecify/memory/skill_config.json` 文件中
+- 文件权限设为 0600（仅文件所有者可读写）
+- Python 脚本在服务端执行，密钥不传递给 LLM 上下文
+
+##### `validate` - 验证配置一致性
+```bash
+/elecspeckit.skillconfig validate
+```
+
+验证 `skill_config.json` 与实际 `.claude/skills/` 目录下的 SKILL.md 文件一致性。
+
+**完整工作流示例**：
+```bash
+# 1. 查看当前 Skills 状态
+/elecspeckit.skillconfig list
+
+# 2. 配置 Mouser API 密钥
+/elecspeckit.skillconfig update mouser-component-search --api-key "YOUR_KEY"
+
+# 3. 启用 mouser-component-search Skill
+/elecspeckit.skillconfig enable mouser-component-search
+
+# 4. 验证配置一致性
+/elecspeckit.skillconfig validate
+```
+
+---
+
 ## 升级已有项目
 
 在已初始化的 ElecSpeckit 项目中，可以重新执行初始化命令来更新模板：
