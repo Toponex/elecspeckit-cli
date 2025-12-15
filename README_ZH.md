@@ -183,10 +183,7 @@ elecspeckit init --no-git
 <project-root>/
 ├── .elecspecify/               # ElecSpeckit 核心配置和资源
 │   ├── memory/
-│   │   ├── constitution.md     # 项目宪法（设计原则和约束）
-│   │   └── knowledge-sources.json  # 外部知识源配置
-│   ├── scripts/                # 辅助脚本（知识源查询、配置管理）
-│   │   └── win/python/         # kbconfig_*.py, query_*.py 等
+│   │   └── constitution.md     # 项目宪法（设计原则和约束）
 │   └── templates/              # 文档模板
 │       ├── spec-template.md
 │       ├── plan-template.md
@@ -208,7 +205,7 @@ elecspeckit init --no-git
 │   ├── elecspeckit.doc-pm.md
 │   ├── elecspeckit.doc-datasheet.md
 │   ├── elecspeckit.doc-kb.md
-│   ├── elecspeckit.kbconfig.md
+│   ├── elecspeckit.skillconfig.md   # Skills 配置管理 (仅 Claude Code)
 │   ├── elecspeckit.clarify.md
 │   ├── elecspeckit.checklist.md
 │   └── elecspeckit.analyze.md
@@ -299,7 +296,7 @@ elecspeckit init --no-git
 
 1. 读取 `spec.md` 和项目宪法
 2. 生成 `research.md` 中的 Phase 0 研究问题列表（如"拓扑选择：Flyback vs LLC"）
-3. 对每个研究问题，引导查询知识源（参考设计、标准）并记录决策依据
+3. 对每个研究问题，引导文献查询（参考设计、标准）并记录决策依据
 4. 在 `plan.md` 中输出架构模块划分和关键设计点
 5. 在 `data-model.md` 中定义模块间接口参数
 
@@ -783,6 +780,23 @@ pytest
 black src/ tests/
 ruff check src/ tests/
 ```
+
+---
+
+## 版本变更
+
+### v0.2.0 (当前版本)
+
+**重大变更**：
+- ✨ **新增 Claude Skills 支持**：Claude Code 平台现支持 23+ 专业 Skills，存储在 `.claude/skills/` 目录
+- 🔄 **移除 kb_config 机制**：旧的 `knowledge-sources.json` 和 `/elecspeckit.kbconfig` 命令已被 Claude Skills 替代
+- 📦 **Skills 自动部署**：初始化 Claude 项目时自动部署信息检索、文档生成、数据分析、嵌入式开发等 Skills
+- ⚙️ **新增 `/elecspeckit.skillconfig` 命令**：管理 Skills 的启用/禁用、API 密钥配置
+- 🔒 **增强安全性**：API 密钥存储在权限受限的 `skill_config.json` 文件中（仅文件所有者可读）
+
+**升级说明**：
+- v0.1.0 项目升级时，旧的 kb_config 配置会自动备份到 `.elecspecify/backup/`
+- 升级后请使用 `/elecspeckit.skillconfig` 管理 Skills，无需手动配置
 
 ---
 

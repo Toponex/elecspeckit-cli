@@ -48,41 +48,213 @@
 
 - **skill-creator**: 创建和管理自定义 Claude Skills
 
-## skill_config.json 配置字段说明
+## skill_config.json 配置字段说明 (详细)
 
-每个 Skill 在 `skill_config.json` 中的配置项包含以下字段：
+Skills 的配置信息存储在 `.elecspecify/memory/skill_config.json` 文件中。该文件控制 Skills 的启用状态、API 密钥等配置。
 
-### 字段详解
-
-| 字段名 | 类型 | 必需 | 说明 |
-|--------|------|------|------|
-| `enabled` | boolean | 是 | 表示 Skill 是否启用。默认 `true`，需要 API 的 Skill 默认 `false` |
-| `requires_api` | boolean | 是 | 表示是否需要外部 API 密钥 |
-| `api_key` | string | 可选 | 存储 API 密钥，仅供 Python 脚本读取，**绝不暴露给 LLM** |
-| `description` | string | 是 | 简要说明 Skill 用途（中文），**只读字段，用户不应修改** |
-
-### 配置示例
+### 配置文件整体结构
 
 ```json
 {
   "version": "0.2.0",
   "platform": "claude",
   "skills": {
+    "<category>": {
+      "<skill-name>": {
+        "enabled": boolean,
+        "requires_api": boolean,
+        "api_key": "string (可选)",
+        "description": "string (中文)"
+      }
+    }
+  }
+}
+```
+
+### 字段详细说明
+
+#### `enabled` (布尔值,必需)
+
+- **含义**: 表示该 Skill 是否启用
+- **数据类型**: `boolean` (`true` 或 `false`)
+- **默认值**:
+  - 不需要 API 的 Skills: `true`
+  - 需要 API 密钥的 Skills: `false` (用户配置密钥后可手动启用)
+- **作用**: Claude Code 只加载 `enabled: true` 的 Skills。禁用的 Skill 对应的 SKILL.md 文件会被重命名为 `(DISABLED)SKILL.md`
+- **修改方式**:
+  - 使用命令: `/elecspeckit.skillconfig enable <skill-name>` 或 `/elecspeckit.skillconfig disable <skill-name>`
+  - 不推荐手动编辑 JSON 文件
+- **示例**:
+  ```json
+  "enabled": true   // Skill 已启用，Claude Code 可调用
+  "enabled": false  // Skill 已禁用，Claude Code 跳过
+  ```
+
+#### `requires_api` (布尔值,必需)
+
+- **含义**: 表示该 Skill 是否需要外部 API 密钥才能正常工作
+- **数据类型**: `boolean` (`true` 或 `false`)
+- **作用**:
+  - 初始化时,`requires_api: true` 的 Skills 默认 `enabled: false`
+  - 在 `/elecspeckit.skillconfig list` 输出中提示用户配置 API 密钥
+  - 决定是否显示 `api_key` 字段
+- **字段来源**: 从 SKILL.md 的 YAML front matter `requires_api` 字段自动提取
+- **用户操作**: **只读字段,用户不应修改**
+- **示例**:
+  ```json
+  "requires_api": false  // 无需 API，直接使用
+  "requires_api": true   // 需要配置 API 密钥后才能使用
+  ```
+
+#### `api_key` (字符串,可选)
+
+- **含义**: 存储外部 API 的访问密钥,**仅供 Python 脚本读取,绝不暴露给 LLM**
+- **数据类型**: `string`
+- **默认值**: 空字符串 `""` (未配置时)
+- **作用**:
+  - Python 脚本从此字段读取密钥
+  - 脚本在服务端完成 API 调用,返回结构化数据给 LLM
+  - LLM 永远不会看到原始 API 密钥
+- **安全机制**:
+  - `skill_config.json` 文件权限自动设置为 `0600` (Linux/macOS) 或等效权限 (Windows)
+  - 仅文件所有者可读写
+  - **绝不在 SKILL.md 或 LLM 提示中包含或引用**
+- **修改方式**:
+  - 使用命令: `/elecspeckit.skillconfig update <skill-name> --api-key YOUR_KEY`
+  - 不推荐手动编辑 JSON 文件 (可能破坏文件权限)
+- **何时出现**: 仅当 `requires_api: true` 时此字段才存在
+- **示例**:
+  ```json
+  "api_key": ""                           // 未配置
+  "api_key": "pplx-abc123xyz..."          // 已配置 Perplexity API 密钥
+  "api_key": "12345678-abcd-ef90-..."     // 已配置 Mouser API 密钥
+  ```
+
+#### `description` (字符串,必需,只读)
+
+- **含义**: Skill 的简要功能说明,使用中文
+- **数据类型**: `string`
+- **字段来源**: 从 SKILL.md 的 YAML front matter `description` 字段自动提取
+- **作用**:
+  - 帮助用户快速理解 Skill 用途
+  - 在 `/elecspeckit.skillconfig list` 输出中显示
+  - 作为 Skills 目录的"目录"信息
+- **用户操作**: **只读字段,用户不应手动修改**。如需修改,应编辑对应的 SKILL.md 文件
+- **格式规范**:
+  - 使用中文
+  - 简洁明了 (建议 10-30 字)
+  - 技术术语可保留英文 (如 "Perplexity AI", "Mouser API")
+- **示例**:
+  ```json
+  "description": "搜索和定位项目文档、技术规格书、数据手册"
+  "description": "使用 Perplexity AI 进行深度网络搜索和研究"
+  "description": "Mouser 电子元器件搜索和参数查询"
+  ```
+
+### 完整配置示例
+
+#### 示例 1: 无需 API 的 Skill (默认启用)
+
+```json
+{
+  "skills": {
     "information_retrieval": {
       "docs-seeker": {
         "enabled": true,
         "requires_api": false,
         "description": "搜索和定位项目文档、技术规格书、数据手册"
-      },
-      "perplexity-search": {
-        "enabled": false,
-        "requires_api": true,
-        "api_key": "",
-        "description": "使用 Perplexity AI 进行高级搜索"
       }
     }
   }
 }
+```
+
+**说明**:
+- `enabled: true` → Skill 已启用,Claude Code 可直接调用
+- `requires_api: false` → 无需 API 密钥
+- 无 `api_key` 字段 (因为不需要)
+
+#### 示例 2: 需要 API 的 Skill (未配置密钥)
+
+```json
+{
+  "skills": {
+    "information_retrieval": {
+      "perplexity-search": {
+        "enabled": false,
+        "requires_api": true,
+        "api_key": "",
+        "description": "使用 Perplexity AI 进行深度网络搜索和研究"
+      }
+    }
+  }
+}
+```
+
+**说明**:
+- `enabled: false` → Skill 默认禁用 (因为缺少 API 密钥)
+- `requires_api: true` → 需要配置 API 密钥
+- `api_key: ""` → 尚未配置
+- 用户需要先配置密钥,再启用 Skill
+
+#### 示例 3: 需要 API 的 Skill (已配置密钥并启用)
+
+```json
+{
+  "skills": {
+    "information_retrieval": {
+      "perplexity-search": {
+        "enabled": true,
+        "requires_api": true,
+        "api_key": "pplx-abc123xyz...",
+        "description": "使用 Perplexity AI 进行深度网络搜索和研究"
+      }
+    }
+  }
+}
+```
+
+**说明**:
+- `enabled: true` → Skill 已启用
+- `api_key: "pplx-..."` → API 密钥已配置
+- 现在 Skill 可以正常工作
+
+### 配置操作工作流
+
+#### 工作流 1: 启用无需 API 的 Skill
+
+```bash
+# 查看状态
+/elecspeckit.skillconfig list
+
+# 如果 Skill 已禁用,直接启用
+/elecspeckit.skillconfig enable docs-seeker
+```
+
+#### 工作流 2: 启用需要 API 的 Skill
+
+```bash
+# 1. 查看状态 (通常显示 enabled: false, api_key: "")
+/elecspeckit.skillconfig list
+
+# 2. 配置 API 密钥
+/elecspeckit.skillconfig update perplexity-search --api-key pplx-your-key-here
+
+# 3. 启用 Skill
+/elecspeckit.skillconfig enable perplexity-search
+
+# 4. 验证配置
+/elecspeckit.skillconfig validate
+```
+
+#### 工作流 3: 禁用 Skill
+
+```bash
+# 禁用 Skill (保留配置)
+/elecspeckit.skillconfig disable perplexity-search
+
+# 此时 enabled: false, 但 api_key 仍保留
+# 下次启用时无需重新配置密钥
 ```
 
 ### 使用指引

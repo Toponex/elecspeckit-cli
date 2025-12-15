@@ -113,20 +113,30 @@ def _create_elecspecify_structure(base_dir: Path, create_backup: bool) -> List[F
         skill_config_source = elecspecify_template_dir / "skill_config_template.json"
         if skill_config_source.exists():
             skill_config_target = memory_dir / "skill_config.json"
-            content = skill_config_source.read_text(encoding="utf-8")
 
-            # 只在文件不存在或为空时创建
-            if (
-                not skill_config_target.exists()
-                or not skill_config_target.read_text(encoding="utf-8").strip()
-            ):
+            # T063.2: 智能合并逻辑
+            if skill_config_target.exists() and skill_config_target.read_text(encoding="utf-8").strip():
+                # 升级模式：执行智能合并
+                if create_backup:
+                    merged_config = _merge_skill_config(skill_config_target, skill_config_source)
+                    import json
+
+                    content = json.dumps(merged_config, indent=2, ensure_ascii=False)
+                    change = write_or_update_file(
+                        skill_config_target, content, create_backup=create_backup
+                    )
+                    changes.append(change)
+                # 否则不做任何操作，保留用户配置
+            else:
+                # 首次创建：直接复制模板
+                content = skill_config_source.read_text(encoding="utf-8")
                 change = write_or_update_file(
                     skill_config_target, content, create_backup=False
                 )
                 changes.append(change)
 
-                # T058.1: 设置文件权限为 0600（仅文件所有者可读写）
-                _set_skill_config_permissions(skill_config_target)
+            # T058.1: 设置文件权限为 0600（仅文件所有者可读写）
+            _set_skill_config_permissions(skill_config_target)
 
         # 复制模板文件到 templates/ 目录
         template_files = [
@@ -420,7 +430,7 @@ def deploy_skills_to_claude(
             summary.add_change(
                 FileChange(
                     path=backup_dir,
-                    status="backed_up",
+                    change_type="backed_up",
                     message=f"备份旧的 Skills 目录到 {backup_dir.relative_to(base_dir)}",
                 )
             )
@@ -434,6 +444,129 @@ def deploy_skills_to_claude(
         summary.add_change(change)
 
     return summary
+
+
+def _merge_skill_config(
+    existing_config_path: Path, template_config_path: Path
+) -> dict:
+    """
+    智能合并 skill_config.json (T063.2)
+
+    保留用户配置的 enabled 状态和 api_key 值，同时更新新增的 Skills
+
+    Args:
+        existing_config_path: 现有的 skill_config.json 路径
+        template_config_path: 模板 skill_config.json 路径
+
+    Returns:
+        合并后的配置字典
+    """
+    import json
+
+    # 读取模板配置 (官方配置)
+    template_config = json.loads(template_config_path.read_text(encoding="utf-8"))
+
+    # 如果现有配置不存在，直接返回模板配置
+    if not existing_config_path.exists():
+        return template_config
+
+    try:
+        # 读取现有配置 (用户配置)
+        existing_config = json.loads(existing_config_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        # 无效 JSON，备份并返回模板配置
+        from datetime import datetime
+
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        backup_path = existing_config_path.with_suffix(f".json.invalid.{timestamp}")
+        existing_config_path.rename(backup_path)
+        return template_config
+
+    # 合并 skills 配置
+    merged_skills = {}
+
+    for category, skills in template_config.get("skills", {}).items():
+        merged_skills[category] = {}
+
+        for skill_name, skill_config in skills.items():
+            # 获取现有配置中的值
+            existing_skill = None
+            if "skills" in existing_config:
+                for cat_skills in existing_config["skills"].values():
+                    if skill_name in cat_skills:
+                        existing_skill = cat_skills[skill_name]
+                        break
+
+            # 合并配置
+            if existing_skill:
+                # 保留用户的 enabled 状态
+                merged_config = skill_config.copy()
+                if "enabled" in existing_skill:
+                    merged_config["enabled"] = existing_skill["enabled"]
+
+                # 保留用户的 api_key
+                if "api_key" in existing_skill and existing_skill["api_key"]:
+                    merged_config["api_key"] = existing_skill["api_key"]
+
+                merged_skills[category][skill_name] = merged_config
+            else:
+                # 新增的 Skill，使用模板配置
+                merged_skills[category][skill_name] = skill_config
+
+    # 构建最终配置
+    merged_config = {
+        "version": template_config["version"],
+        "platform": template_config["platform"],
+        "skills": merged_skills,
+        "notes": template_config.get("notes", {}),
+    }
+
+    return merged_config
+
+
+def get_api_required_skills(base_dir: Path) -> list[dict]:
+    """
+    获取需要 API 密钥的 Skills 列表 (T061)
+
+    Args:
+        base_dir: 项目根目录
+
+    Returns:
+        需要 API 密钥的 Skills 列表，每个元素包含:
+        - name: Skill 名称
+        - description: Skill 描述
+        - category: 所属分类
+    """
+    skill_config_file = base_dir / ".elecspecify" / "memory" / "skill_config.json"
+
+    if not skill_config_file.exists():
+        return []
+
+    try:
+        import json
+
+        config = json.loads(skill_config_file.read_text(encoding="utf-8"))
+
+        api_skills = []
+        for category, skills in config.get("skills", {}).items():
+            for skill_name, skill_config in skills.items():
+                if skill_config.get("requires_api", False):
+                    # 检查是否已配置 API 密钥
+                    has_api_key = bool(skill_config.get("api_key", "").strip())
+
+                    if not has_api_key:
+                        api_skills.append(
+                            {
+                                "name": skill_name,
+                                "description": skill_config.get("description", ""),
+                                "category": category,
+                            }
+                        )
+
+        return api_skills
+    except Exception:
+        # 读取失败返回空列表
+        return []
 
 
 def _set_skill_config_permissions(skill_config_path: Path) -> None:

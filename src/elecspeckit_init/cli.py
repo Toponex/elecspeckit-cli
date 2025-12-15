@@ -579,6 +579,33 @@ def _print_init_result(result: dict) -> None:
                 f"  Git: [{git_status_color}]{result['git_message']}[/{git_status_color}]"
             )
 
+        # T061: 显示 API 密钥提示 (仅 Claude 平台)
+        if result.get("platform") == "claude":
+            from pathlib import Path
+
+            from .template_manager import get_api_required_skills
+
+            try:
+                api_skills = get_api_required_skills(Path.cwd())
+                if api_skills:
+                    console.print()
+                    console.print("[yellow]⚠ API 密钥配置提示:[/yellow]")
+                    console.print(
+                        f"  检测到 {len(api_skills)} 个 Skills 需要 API 密钥才能使用：\n"
+                    )
+                    for skill in api_skills[:3]:  # 最多显示 3 个
+                        console.print(f"  • [cyan]{skill['name']}[/cyan] - {skill['description']}")
+                    if len(api_skills) > 3:
+                        console.print(f"  [dim]  ...还有 {len(api_skills) - 3} 个 Skills[/dim]")
+
+                    console.print(
+                        "\n  [dim]配置方法: 编辑 [cyan].elecspecify/memory/skill_config.json[/cyan]，"
+                        "在对应 Skill 的 [cyan]api_key[/cyan] 字段填写密钥[/dim]"
+                    )
+            except Exception:
+                # 获取 API Skills 失败不影响主流程
+                pass
+
         # 显示使用说明
         if mode == "new":
             usage_text = (
