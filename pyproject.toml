@@ -60,6 +60,13 @@ embedded = [
     "pyserial>=3.5",
     "esptool>=4.5",
 ]
+# 安全增强可选依赖 (FR-044, FR-048, v0.3.0 计划)
+# 安装方式: uv tool install .[security]
+security = [
+    "pywin32>=306; platform_system=='Windows'",  # FR-044: Windows DPAPI for API key encryption
+    "keyring>=24.0.0; platform_system=='Linux' or platform_system=='Darwin'",  # FR-044: Linux/macOS keyring
+    "packaging>=23.0",  # FR-048: Version comparison for dependency checking
+]
 
 [project.scripts]
 elecspeckit = "elecspeckit_init.cli:app"

@@ -2,7 +2,7 @@
 name: architecture-diagrams
 description: 使用 Mermaid、PlantUML、C4 模型、流程图和序列图创建系统架构图。在记录架构、系统设计、数据流或技术工作流时使用。
 ---
-# Architecture Diagrams (架构图)
+# Architecture Diagrams Skill (架构图技能)
 
 使用 Mermaid、PlantUML、C4 模型、流程图和时序图创建系统架构图。
 
@@ -849,18 +849,3 @@ MCU -- PowerMode
 - [C4 模型](https://c4model.com/)
 - [代码即图表（Diagrams as Code）](https://diagrams.mingrammer.com/)
 - [UML 教程](https://www.uml-diagrams.org/)
-
-## 版本历史
-
-- **v1.0.0**（2025-12-16）：初始版本
-  - Mermaid 示例
-  - PlantUML 示例
-  - C4 模型示例
-  - 嵌入式系统架构示例
-  - 最佳实践指南
-
----
-
-**最后更新**：2025-12-16
-**Skill 类型**：Type 1（知识库）
-**状态**：生产就绪

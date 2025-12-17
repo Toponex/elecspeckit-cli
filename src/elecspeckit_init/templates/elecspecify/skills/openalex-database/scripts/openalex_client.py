@@ -9,10 +9,26 @@ Provides a robust client for interacting with the OpenAlex API with:
 - Batch operations support
 """
 
+import json
+import sys
 import time
-import requests
 from typing import Dict, List, Optional, Any
 from urllib.parse import urljoin
+
+# FR-048: Check Python dependencies before execution
+try:
+    import requests
+except ImportError:
+    print("Error: 'requests' library is not installed.", file=sys.stderr)
+    print("Install it with: uv pip install requests", file=sys.stderr)
+    sys.exit(1)
+
+try:
+    import pyalex
+except ImportError:
+    print("Error: 'pyalex' library is not installed.", file=sys.stderr)
+    print("Install it with: uv pip install pyalex", file=sys.stderr)
+    sys.exit(1)
 
 
 class OpenAlexClient:

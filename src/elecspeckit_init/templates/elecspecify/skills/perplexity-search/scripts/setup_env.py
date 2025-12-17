@@ -11,6 +11,7 @@ Author: Scientific Skills
 License: MIT
 """
 
+import json
 import os
 import sys
 import argparse

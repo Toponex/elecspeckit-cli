@@ -30,6 +30,7 @@ from rich.panel import Panel
 
 from .fs_utils import is_elecspeckit_project, is_empty_directory
 from .git_utils import initialize_git_repo, is_git_available, is_git_repo
+from .platform_utils import check_disk_space, setup_utf8_output
 from .template_manager import (
     check_multi_platform_conflict,
     detect_platform,
@@ -170,6 +171,16 @@ def _init_new_project(
             "[yellow]注意:[/yellow] Qwen 平台不支持 Claude Skills 功能，"
             "部分高级特性（如知识库自动查询、文档发现）将不可用\n"
         )
+
+    # FR-047: 检查磁盘空间（部署前需 ≥ 100MB）
+    enough, free_mb = check_disk_space(base_dir, required_mb=100)
+    if not enough:
+        error_msg = f"磁盘空间不足（剩余 {free_mb}MB），需要至少 100MB"
+        if json_output:
+            return {"status": "error", "message": error_msg, "disk_free_mb": free_mb, "disk_required_mb": 100}
+        else:
+            console.print(f"[red]错误:[/red] {error_msg}")
+            return {"status": "error", "message": error_msg}
 
     # 初始化项目结构
     try:
@@ -402,6 +413,16 @@ def _upgrade_existing_project(
             if not json_output:
                 console.print("[dim]constitution.md 不存在，跳过重置[/dim]\n")
             reset_result = {"success": False, "skipped": True, "reason": "constitution.md 不存在"}
+
+    # FR-047: 检查磁盘空间（升级前需 ≥ 100MB）
+    enough, free_mb = check_disk_space(base_dir, required_mb=100)
+    if not enough:
+        error_msg = f"磁盘空间不足（剩余 {free_mb}MB），需要至少 100MB"
+        if json_output:
+            return {"status": "error", "message": error_msg, "disk_free_mb": free_mb, "disk_required_mb": 100}
+        else:
+            console.print(f"[red]错误:[/red] {error_msg}")
+            return {"status": "error", "message": error_msg}
 
     try:
         # 升级项目结构 (使用 create_backup=True 保护用户内容)
