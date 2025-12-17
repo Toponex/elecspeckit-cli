@@ -9,10 +9,29 @@ description: "硬件架构研究与选型决策模板"
 ## 如何使用本模板
 
 1. **识别研究问题**: 在规格分析和初步架构规划时，列出需要深入研究的技术选型问题（如拓扑选择、器件选型、层叠结构等）
-2. **推荐信息源**: 基于 `.elecspecify/memory/knowledge-sources.json` 为每个问题推荐相关的参考设计、标准文档、公司知识库或 web 搜索
-3. **执行查询**: 使用 `.elecspecify/scripts/win/python/` 下的查询脚本（如 `query_reference_design.py`、`query_metaso.py`、`query_standards.py`）获取技术资料
+2. **推荐信息源**: 根据问题性质选择合适的 ElecSpecKit Skills 进行研究
+3. **执行查询**: 使用自然语言请求相关 Skills 获取技术资料（如"使用 web-research 搜索 AHB 拓扑特性"）
 4. **记录候选方案**: 将查询结果提取为候选方案，说明各方案的技术特性、优缺点和成本影响
 5. **补充决策**: 由工程师在 Decision 和 Rationale 字段中填写最终选择和决策依据
+
+## 可用的研究 Skills
+
+**信息检索类**:
+- `docs-seeker`: 搜索技术文档、数据手册
+- `arxiv-search`: 搜索学术论文
+- `web-research`: 网络技术调研
+- `openalex-database`: 学术数据库查询
+
+**元器件采购类**:
+- `mouser-component-search`: Mouser 元器件搜索（需要 API 密钥）
+
+**文献管理类**:
+- `citation-management`: 管理研究参考文献
+
+**领域分析类** (v0.2.1 占位符):
+- `circuit-commutation-analysis`: 电路拓扑分析
+- `thermal-simulation`: 热仿真
+- `emc-analysis`: EMC/EMI 分析
 
 ## Phase 0 研究问题列表
 
@@ -25,29 +44,23 @@ description: "硬件架构研究与选型决策模板"
 [待补充需要研究的架构级问题]
 
 **Suggested sources**
-<!-- 从 knowledge-sources.json 推荐的信息源 -->
+<!-- 推荐使用的 ElecSpecKit Skills -->
 <!-- 示例: -->
-<!-- - **reference_designs**: TI PMP22682(65W AHB参考), ON Semi NCP13992参考设计(65W LLC参考) -->
-<!-- - **web**: Metaso学术搜索 -->
-<!-- - **standards**: IEC 62368-1 -->
-[待补充推荐的信息源，包括 reference_designs、company_kb、web、standards 等类别]
+<!-- - **web-research**: 搜索 AHB vs LLC 拓扑对比 -->
+<!-- - **arxiv-search**: 搜索相关学术论文 -->
+<!-- - **mouser-component-search**: 查询相关元器件 -->
+[待补充推荐的 Skills，根据问题性质选择合适的信息检索工具]
 
 **Research steps**
-<!-- 具体查询步骤及命令 -->
+<!-- 具体查询步骤，使用自然语言请求 Skills -->
 <!-- 示例: -->
-<!-- 1. 查询TI PMP22682参考设计了解AHB拓扑特性: -->
-<!--    ```bash -->
-<!--    python .elecspecify/scripts/win/python/query_reference_design.py "PMP22682 65W AHB topology characteristics" -->
-<!--    ``` -->
-<!-- 2. 查询Metaso学术搜索拓扑对比: -->
-<!--    ```bash -->
-<!--    python .elecspecify/scripts/win/python/query_metaso.py "AHB LLC 65W 拓扑对比 效率 成本" -->
-<!--    ``` -->
-<!-- 3. 查询IEC标准: -->
-<!--    ```bash -->
-<!--    python .elecspecify/scripts/win/python/query_standards.py "IEC 62368-1 拓扑安全要求" -->
-<!--    ``` -->
-[待补充具体查询步骤，包括命令行调用]
+<!-- 1. 使用 web-research 搜索 AHB 拓扑特性: -->
+<!--    "请使用 web-research 搜索 '65W AHB topology characteristics efficiency cost'" -->
+<!-- 2. 使用 arxiv-search 查找学术论文: -->
+<!--    "请使用 arxiv-search 搜索 'LLC resonant converter 65W PD charger'" -->
+<!-- 3. 使用 docs-seeker 查找参考设计文档: -->
+<!--    "请使用 docs-seeker 搜索 'TI PMP22682 reference design'" -->
+[待补充具体查询步骤，描述如何使用 Skills]
 
 **Candidates**
 <!-- 执行Research steps后从查询结果中提取的候选方案 -->

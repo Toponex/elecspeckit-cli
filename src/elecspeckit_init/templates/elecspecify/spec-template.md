@@ -5,6 +5,29 @@
 **状态**: 草稿
 **输入**: 工程师描述: "$ARGUMENTS"
 
+<!--
+ElecSpecKit Skills 使用提示:
+在编写本规格时，可以使用以下 Skills 辅助信息收集和文档生成：
+
+**信息检索类**:
+- docs-seeker: 搜索技术规格书、数据手册
+- arxiv-search: 搜索相关学术论文
+- web-research: 网络信息收集
+- openalex-database: 学术数据库查询
+
+**文档生成类**:
+- architecture-diagrams: 生成系统架构图
+- mermaid-tools: 创建流程图、时序图
+- docs-write: 文档编写辅助
+
+**领域分析类** (v0.2.1 占位符):
+- circuit-commutation-analysis: 电路拓扑分析
+- thermal-simulation: 热仿真
+- emc-analysis: EMC 分析
+
+提示：在需要时通过自然语言请求使用这些 Skills，例如"使用 docs-seeker 搜索 STM32F103 数据手册"
+-->
+
 ## 用户场景与测试 *(必需)*
 
 <!--

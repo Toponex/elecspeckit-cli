@@ -36,6 +36,7 @@ COMMAND_BASENAMES = [
     "elecspeckit.clarify",
     "elecspeckit.checklist",
     "elecspeckit.analyze",
+    "elecspeckit.skillconfig",
 ]
 
 
@@ -74,19 +75,17 @@ def _create_elecspecify_structure(base_dir: Path, create_backup: bool) -> List[F
 
     包括:
     - .elecspecify/memory/constitution.md
-    - .elecspecify/scripts/powershell/
+    - .elecspecify/scripts/ (由 copy_directory_tree 根据模板内容自动创建)
     - .elecspecify/templates/ (spec-template.md, plan-template.md, etc.)
     """
     changes: List[FileChange] = []
 
     elecspecify_dir = base_dir / ".elecspecify"
     memory_dir = elecspecify_dir / "memory"
-    scripts_dir = elecspecify_dir / "scripts" / "powershell"
     templates_dir = elecspecify_dir / "templates"
 
-    # 创建目录
+    # 创建目录（scripts/ 目录由 copy_directory_tree 自动创建，不需要预先创建）
     ensure_directory_exists(memory_dir)
-    ensure_directory_exists(scripts_dir)
     ensure_directory_exists(templates_dir)
 
     # 复制 elecspecify 模板
@@ -322,7 +321,7 @@ def check_multi_platform_conflict(base_dir: Path) -> tuple[bool, list[str]]:
     return False, detected
 
 
-# FR-006 定义的 23 个 Skills 清单
+# v0.2.1 定义的 15 个 Skills 清单 (Phase 4 US2 删除了 8 个不支持的 Skills)
 REQUIRED_SKILLS = [
     # 信息检索 (5)
     "docs-seeker",
@@ -330,22 +329,14 @@ REQUIRED_SKILLS = [
     "web-research",
     "perplexity-search",
     "openalex-database",
-    # 文档生成 (7)
-    "docx",
-    "pdf",
-    "xlsx",
-    "pptx",
+    # 文档生成 (3)
     "architecture-diagrams",
     "mermaid-tools",
     "docs-write",
-    # 数据分析 (2)
-    "hardware-data-analysis",
+    # 数据分析 (1)
     "citation-management",
-    # 嵌入式系统 (4)
+    # 嵌入式系统 (1)
     "embedded-systems",
-    "hardware-protocols",
-    "esp32-embedded-dev",
-    "embedded-best-practices",
     # 元器件采购 (1)
     "mouser-component-search",
     # 领域分析 (3)
@@ -361,7 +352,7 @@ def verify_skills_source_integrity() -> tuple[bool, list[str]]:
     """
     验证源 Skills 库完整性 (T057.1)
 
-    检查模板目录是否包含 FR-006 定义的全部 23 个 Skills
+    检查模板目录是否包含 v0.2.1 定义的全部 15 个 Skills
 
     Returns:
         (是否完整, 缺失的 Skills 列表) 元组
@@ -401,7 +392,7 @@ def deploy_skills_to_claude(
     if not is_complete:
         raise RuntimeError(
             f"源 Skills 库不完整，缺失以下 Skills: {', '.join(missing_skills)}\n"
-            f"请确保 templates/elecspecify/skills/ 目录包含全部 23 个 Skills"
+            f"请确保 templates/elecspecify/skills/ 目录包含全部 15 个 Skills"
         )
 
     summary = ChangeSummary(changes=[])

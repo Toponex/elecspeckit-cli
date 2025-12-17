@@ -1,44 +1,96 @@
 ---
-name: "docs-write"
-description: "编写和格式化技术文档"
-requires_api: false
+name: docs-write
+description: Write documentation following Metabase's conversational, clear, and user-focused style. Use when creating or editing documentation files (markdown, MDX, etc.).
+allowed-tools: Read, Write, Grep, Bash, Glob
 ---
 
-# docs-write Skill
+# Documentation Writing Skill
 
-## 概述
+@./../_shared/metabase-style-guide.md
 
-编写和格式化技术文档。
+## When writing documentation
 
-## 依赖
+### Start here
 
-**无需额外依赖**
+1. **Who is this for?** Match complexity to audience. Don't oversimplify hard things or overcomplicate simple ones.
+2. **What do they need?** Get them to the answer fast. Nobody wants to be in docs longer than necessary.
+3. **What did you struggle with?** Those common questions you had when learning? Answer them (without literally including the question).
 
-## 使用
+### Writing process
 
-### 基本用法
+**Draft:**
 
+- Write out the steps/explanation as you'd tell a colleague
+- Lead with what to do, then explain why
+- Use headings that state your point: "Set SAML before adding users" not "SAML configuration timing"
 
+**Edit:**
 
-## ElecSpeckit 集成指南
+- Read aloud. Does it sound like you talking? If it's too formal, simplify.
+- Cut anything that doesn't directly help the reader
+- Check each paragraph has one clear purpose
+- Verify examples actually work (don't give examples that error)
 
-### 在 ElecSpeckit 工作流中使用
+**Polish:**
 
-**场景**: 文档生成类相关任务
+- Make links descriptive (never "here")
+- Backticks only for code/variables, **bold** for UI elements
+- American spelling, serial commas
+- Keep images minimal and scoped tight
 
-适用于以下 ElecSpeckit 命令:
--  - 架构设计阶段
--  - 规格编写阶段  
--  - 任务拆解阶段
+**Format:**
 
-## 示例
+- Run prettier on the file after making edits: `yarn prettier --write <file-path>`
+- This ensures consistent formatting across all documentation
 
-### 示例 1
+### Common patterns
 
+**Instructions:**
 
+```markdown
+Run:
+\`\`\`
+command-to-run
+\`\`\`
 
----
+Then:
+\`\`\`
+next-command
+\`\`\`
 
-**版本**: v0.2.0
-**维护者**: ElecSpeckit Team
-**许可证**: Apache License 2.0
+This ensures you're getting the latest changes.
+```
+
+Not: "(remember to run X before Y...)" buried in a paragraph.
+
+**Headings:**
+
+- "Use environment variables for configuration" ✅
+- "Environment variables" ❌ (too vague)
+- "How to use environment variables for configuration" ❌ (too wordy)
+
+**Links:**
+
+- "Check out the [SAML documentation](link)" ✅
+- "Read the docs [here](link)" ❌
+
+### Watch out for
+
+- Describing tasks as "easy" (you don't know the reader's context)
+- Using "we" when talking about Metabase features (use "Metabase" or "it")
+- Formal language: "utilize", "reference", "offerings"
+- Too peppy: multiple exclamation points
+- Burying the action in explanation
+- Code examples that don't work
+- Numbers that will become outdated
+
+### Quick reference
+
+| Write This                 | Not This           |
+| -------------------------- | ------------------ |
+| people, companies          | users              |
+| summarize                  | aggregate          |
+| take a look at             | reference          |
+| can't, don't               | cannot, do not     |
+| **Filter** button          | \`Filter\` button  |
+| Check out [the docs](link) | Click [here](link) |

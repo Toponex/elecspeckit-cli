@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.2.1",
   "platform": "claude",
   "skills": {
     "information_retrieval": {
@@ -31,26 +31,6 @@
       }
     },
     "document_generation": {
-      "docx": {
-        "enabled": true,
-        "requires_api": false,
-        "description": "生成 Microsoft Word 文档"
-      },
-      "pdf": {
-        "enabled": true,
-        "requires_api": false,
-        "description": "生成 PDF 文档"
-      },
-      "xlsx": {
-        "enabled": true,
-        "requires_api": false,
-        "description": "生成和编辑 Excel 电子表格"
-      },
-      "pptx": {
-        "enabled": true,
-        "requires_api": false,
-        "description": "生成 PowerPoint 演示文稿"
-      },
       "architecture-diagrams": {
         "enabled": true,
         "requires_api": false,
@@ -68,11 +48,6 @@
       }
     },
     "data_analysis": {
-      "hardware-data-analysis": {
-        "enabled": true,
-        "requires_api": false,
-        "description": "分析硬件测试数据和性能指标"
-      },
       "citation-management": {
         "enabled": true,
         "requires_api": false,
@@ -84,21 +59,6 @@
         "enabled": true,
         "requires_api": false,
         "description": "嵌入式系统开发指导和最佳实践"
-      },
-      "hardware-protocols": {
-        "enabled": true,
-        "requires_api": false,
-        "description": "硬件通信协议支持 (I2C, SPI, UART, CAN等)"
-      },
-      "esp32-embedded-dev": {
-        "enabled": true,
-        "requires_api": false,
-        "description": "ESP32 开发和调试支持"
-      },
-      "embedded-best-practices": {
-        "enabled": true,
-        "requires_api": false,
-        "description": "嵌入式开发最佳实践和设计模式"
       }
     },
     "component_search": {
@@ -106,7 +66,7 @@
         "enabled": true,
         "requires_api": true,
         "api_key": "",
-        "description": "搜索 Mouser 电子元器件库存和价格"
+        "description": "Mouser 元器件库存和价格查询"
       }
     },
     "domain_analysis": {

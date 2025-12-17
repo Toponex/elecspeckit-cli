@@ -1,211 +1,207 @@
 ---
-name: "docs-seeker"
-description: "搜索和定位项目文档、技术规格书、数据手册"
-requires_api: false
+name: docs-seeker
+description: "Searching internet for technical documentation using llms.txt standard, GitHub repositories via Repomix, and parallel exploration. Use when user needs: (1) Latest documentation for libraries/frameworks, (2) Documentation in llms.txt format, (3) GitHub repository analysis, (4) Documentation without direct llms.txt support, (5) Multiple documentation sources in parallel"
+version: 1.0.0
 ---
 
-# docs-seeker Skill
+# Documentation Discovery & Analysis
 
-## 概述
+## Overview
 
-docs-seeker 是一个文档搜索和定位工具，专为硬件/电子项目设计。它可以帮助你快速找到：
+Intelligent discovery and analysis of technical documentation through multiple strategies:
 
-- 项目内部文档（规格书、设计文档、测试报告）
-- 芯片数据手册（Datasheet）
-- 技术参考手册（Reference Manual）
-- 应用笔记（Application Note）
-- 行业标准文档（IPC、ISO、IEC 等）
+1. **llms.txt-first**: Search for standardized AI-friendly documentation
+2. **Repository analysis**: Use Repomix to analyze GitHub repositories
+3. **Parallel exploration**: Deploy multiple Explorer agents for comprehensive coverage
+4. **Fallback research**: Use Researcher agents when other methods unavailable
 
-## 依赖
+## Core Workflow
 
-**无需额外依赖**。此 Skill 使用 Claude Code 内置的文件搜索功能。
+### Phase 1: Initial Discovery
 
-## 使用
+1. **Identify target**
+   - Extract library/framework name from user request
+   - Note version requirements (default: latest)
+   - Clarify scope if ambiguous
+   - Identify if target is GitHub repository or website
 
-### 基本用法
+2. **Search for llms.txt (PRIORITIZE context7.com)**
 
-在 Claude Code 对话中直接调用：
+   **First: Try context7.com patterns**
 
+   For GitHub repositories:
+   ```
+   Pattern: https://context7.com/{org}/{repo}/llms.txt
+   Examples:
+   - https://github.com/imagick/imagick → https://context7.com/imagick/imagick/llms.txt
+   - https://github.com/vercel/next.js → https://context7.com/vercel/next.js/llms.txt
+   - https://github.com/better-auth/better-auth → https://context7.com/better-auth/better-auth/llms.txt
+   ```
+
+   For websites:
+   ```
+   Pattern: https://context7.com/websites/{normalized-domain-path}/llms.txt
+   Examples:
+   - https://docs.imgix.com/ → https://context7.com/websites/imgix/llms.txt
+   - https://docs.byteplus.com/en/docs/ModelArk/ → https://context7.com/websites/byteplus_en_modelark/llms.txt
+   - https://docs.haystack.deepset.ai/docs → https://context7.com/websites/haystack_deepset_ai/llms.txt
+   - https://ffmpeg.org/doxygen/8.0/ → https://context7.com/websites/ffmpeg_doxygen_8_0/llms.txt
+   ```
+
+   **Topic-specific searches** (when user asks about specific feature):
+   ```
+   Pattern: https://context7.com/{path}/llms.txt?topic={query}
+   Examples:
+   - https://context7.com/shadcn-ui/ui/llms.txt?topic=date
+   - https://context7.com/shadcn-ui/ui/llms.txt?topic=button
+   - https://context7.com/vercel/next.js/llms.txt?topic=cache
+   - https://context7.com/websites/ffmpeg_doxygen_8_0/llms.txt?topic=compress
+   ```
+
+   **Fallback: Traditional llms.txt search**
+   ```
+   WebSearch: "[library name] llms.txt site:[docs domain]"
+   ```
+   Common patterns:
+   - `https://docs.[library].com/llms.txt`
+   - `https://[library].dev/llms.txt`
+   - `https://[library].io/llms.txt`
+
+   → Found? Proceed to Phase 2
+   → Not found? Proceed to Phase 3
+
+### Phase 2: llms.txt Processing
+
+**Single URL:**
+- WebFetch to retrieve content
+- Extract and present information
+
+**Multiple URLs (3+):**
+- **CRITICAL**: Launch multiple Explorer agents in parallel
+- One agent per major documentation section (max 5 in first batch)
+- Each agent reads assigned URLs
+- Aggregate findings into consolidated report
+
+Example:
 ```
-请使用 docs-seeker 查找 STM32F407 的数据手册
-```
-
-### 搜索项目文档
-
-```
-使用 docs-seeker 搜索项目中的 AC-DC 电源模块设计文档
-```
-
-### 搜索特定章节
-
-```
-在 ESP32 技术参考手册中查找 I2C 接口配置章节
-```
-
-## 功能特性
-
-1. **智能路径推断**: 根据文件类型自动推断可能的存储位置
-   - 数据手册: `docs/datasheets/`, `references/datasheets/`
-   - 应用笔记: `docs/app-notes/`, `references/`
-   - 标准文档: `standards/`, `docs/standards/`
-
-2. **模糊匹配**: 支持部分匹配和关键词搜索
-
-3. **硬件适配**: 优先搜索硬件项目常见的文档类型
-
-## ElecSpeckit 集成指南
-
-### 在 /elecspeckit.plan 中使用
-
-**场景**: Phase 0 研究阶段，查找参考设计和芯片数据手册
-
-```
-用户: /elecspeckit.plan
-
-AI: 开始 Phase 0 研究...
-    问题 1: AC-DC 拓扑选择 - Flyback vs LLC
-
-    [内部调用] 使用 docs-seeker 搜索:
-    - Flyback 应用笔记
-    - LLC 参考设计文档
-    - 相关芯片数据手册
-
-    基于查找到的文档，分析各拓扑优缺点...
-```
-
-### 在 /elecspeckit.specify 中使用
-
-**场景**: 编写规格时，引用标准文档和参考设计
-
-```
-用户: /elecspeckit.specify CAN 通信接口模块
-
-AI: [内部调用] 使用 docs-seeker 查找:
-    - ISO 11898 CAN 标准文档
-    - CAN 收发器数据手册
-    - CAN 接口设计应用笔记
-
-    生成规格时引用这些文档...
-```
-
-### 典型使用流程
-
-1. **架构设计阶段**: 查找参考设计、应用笔记
-2. **器件选型阶段**: 查找芯片数据手册、选型指南
-3. **合规验证阶段**: 查找行业标准文档
-4. **设计评审阶段**: 查找设计检查清单
-
-## 最佳实践
-
-### ✅ 推荐做法
-
-- 明确指定文档类型（数据手册、应用笔记、标准）
-- 提供芯片型号或关键词（如 "STM32F407", "LLC 拓扑"）
-- 指定具体章节或参数（如 "电气特性", "I2C 配置"）
-
-### ❌ 避免做法
-
-- 不要使用过于宽泛的关键词（如 "芯片", "设计"）
-- 不要在没有文档的情况下假设内容
-
-## 示例
-
-### 示例 1: 查找数据手册
-
-```
-用户: 使用 docs-seeker 查找 TPS54620 数据手册中的电气特性参数
-
-AI: [搜索 TPS54620 数据手册]
-    找到: docs/datasheets/TPS54620.pdf
-
-    提取电气特性章节:
-    - 输入电压范围: 4.5V - 17V
-    - 输出电流: 最大 6A
-    - 开关频率: 200kHz - 2.5MHz
-    ...
+Launch 3 Explorer agents simultaneously:
+- Agent 1: getting-started.md, installation.md
+- Agent 2: api-reference.md, core-concepts.md
+- Agent 3: examples.md, best-practices.md
 ```
 
-### 示例 2: 查找应用笔记
+### Phase 3: Repository Analysis
 
+**When llms.txt not found:**
+
+1. Find GitHub repository via WebSearch
+2. Use Repomix to pack repository:
+   ```bash
+   npm install -g repomix  # if needed
+   git clone [repo-url] /tmp/docs-analysis
+   cd /tmp/docs-analysis
+   repomix --output repomix-output.xml
+   ```
+3. Read repomix-output.xml and extract documentation
+
+**Repomix benefits:**
+- Entire repository in single AI-friendly file
+- Preserves directory structure
+- Optimized for AI consumption
+
+### Phase 4: Fallback Research
+
+**When no GitHub repository exists:**
+- Launch multiple Researcher agents in parallel
+- Focus areas: official docs, tutorials, API references, community guides
+- Aggregate findings into consolidated report
+
+## Agent Distribution Guidelines
+
+- **1-3 URLs**: Single Explorer agent
+- **4-10 URLs**: 3-5 Explorer agents (2-3 URLs each)
+- **11+ URLs**: 5-7 Explorer agents (prioritize most relevant)
+
+## Version Handling
+
+**Latest (default):**
+- Search without version specifier
+- Use current documentation paths
+
+**Specific version:**
+- Include version in search: `[library] v[version] llms.txt`
+- Check versioned paths: `/v[version]/llms.txt`
+- For repositories: checkout specific tag/branch
+
+## Output Format
+
+```markdown
+# Documentation for [Library] [Version]
+
+## Source
+- Method: [llms.txt / Repository / Research]
+- URLs: [list of sources]
+- Date accessed: [current date]
+
+## Key Information
+[Extracted relevant information organized by topic]
+
+## Additional Resources
+[Related links, examples, references]
+
+## Notes
+[Any limitations, missing information, or caveats]
 ```
-用户: 查找 LLC 谐振转换器的设计应用笔记
 
-AI: [搜索 LLC 应用笔记]
-    找到:
-    - references/app-notes/AN-4151_LLC_Design_Guide.pdf
-    - references/designs/LLC_Reference_Design.pdf
+## Quick Reference
 
-    关键设计要点:
-    - 谐振频率选择
-    - 变压器设计
-    - 控制环路设计
-    ...
-```
+**Tool selection:**
+- WebSearch → Find llms.txt URLs, GitHub repositories
+- WebFetch → Read single documentation pages
+- Task (Explore) → Multiple URLs, parallel exploration
+- Task (Researcher) → Scattered documentation, diverse sources
+- Repomix → Complete codebase analysis
 
-### 示例 3: 查找标准文档
+**Popular llms.txt locations (try context7.com first):**
+- Astro: https://context7.com/withastro/astro/llms.txt
+- Next.js: https://context7.com/vercel/next.js/llms.txt
+- Remix: https://context7.com/remix-run/remix/llms.txt
+- shadcn/ui: https://context7.com/shadcn-ui/ui/llms.txt
+- Better Auth: https://context7.com/better-auth/better-auth/llms.txt
 
-```
-用户: 查找 IPC-2221 PCB 设计标准
+**Fallback to official sites if context7.com unavailable:**
+- Astro: https://docs.astro.build/llms.txt
+- Next.js: https://nextjs.org/llms.txt
+- Remix: https://remix.run/llms.txt
+- SvelteKit: https://kit.svelte.dev/llms.txt
 
-AI: [搜索 IPC-2221 标准]
-    找到: standards/IPC-2221B.pdf
+## Error Handling
 
-    相关章节:
-    - 走线宽度和间距
-    - 过孔设计
-    - 热管理
-    ...
-```
+- **llms.txt not accessible** → Try alternative domains → Repository analysis
+- **Repository not found** → Search official website → Use Researcher agents
+- **Repomix fails** → Try /docs directory only → Manual exploration
+- **Multiple conflicting sources** → Prioritize official → Note versions
 
-## 故障排除
+## Key Principles
 
-### 问题: 找不到文档
+1. **Prioritize context7.com for llms.txt** — Most comprehensive and up-to-date aggregator
+2. **Use topic parameters when applicable** — Enables targeted searches with ?topic=...
+3. **Use parallel agents aggressively** — Faster results, better coverage
+4. **Verify official sources as fallback** — Use when context7.com unavailable
+5. **Report methodology** — Tell user which approach was used
+6. **Handle versions explicitly** — Don't assume latest
 
-**解决方案**:
-1. 检查文档是否在项目目录中
-2. 尝试使用更具体的关键词
-3. 检查文档文件名是否包含关键词
+## Detailed Documentation
 
-### 问题: 找到的文档不是目标文档
+For comprehensive guides, examples, and best practices:
 
-**解决方案**:
-1. 提供更完整的芯片型号或文档名称
-2. 指定文档类型（数据手册 vs 应用笔记）
-3. 提供文档发布者信息（如 "TI 的 LLC 应用笔记"）
+**Workflows:**
+- [WORKFLOWS.md](./WORKFLOWS.md) — Detailed workflow examples and strategies
 
-## 技术细节
-
-### 搜索策略
-
-1. **路径优先级**:
-   - `docs/datasheets/`
-   - `references/`
-   - `standards/`
-   - 项目根目录
-
-2. **文件类型优先级**:
-   - `.pdf` (最高)
-   - `.md`, `.txt`
-   - `.doc`, `.docx`
-
-3. **关键词匹配**:
-   - 文件名匹配
-   - 内容搜索（如果支持）
-
-### 性能优化
-
-- 使用 Claude Code 内置索引加速搜索
-- 缓存常用文档路径
-- 优先搜索最近访问的文档
-
-## 相关 Skills
-
-- **web-research**: 在线搜索文档和参考资料
-- **arxiv-search**: 搜索学术论文
-- **citation-management**: 管理文档引用
-
----
-
-**版本**: v0.2.0
-**维护者**: ElecSpeckit Team
-**许可证**: Apache License 2.0
+**Reference guides:**
+- [Tool Selection](./references/tool-selection.md) — Complete guide to choosing and using tools
+- [Documentation Sources](./references/documentation-sources.md) — Common sources and patterns across ecosystems
+- [Error Handling](./references/error-handling.md) — Troubleshooting and resolution strategies
+- [Best Practices](./references/best-practices.md) — 8 essential principles for effective discovery
+- [Performance](./references/performance.md) — Optimization techniques and benchmarks
+- [Limitations](./references/limitations.md) — Boundaries and success criteria

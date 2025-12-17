@@ -3,7 +3,34 @@
 **分支**: `[###-feature-name]` | **日期**: [DATE] | **规范**: `/specs/[###-feature-name]/spec.md`
 **输入**: 功能规范来自 `specs/[###-feature-name]/spec.md`
 
-**注意**: 此模板由 `/elecspeckit.plan` 命令参考填充，用于指导硬件特性的架构设计与实施计划。  
+**注意**: 此模板由 `/elecspeckit.plan` 命令参考填充，用于指导硬件特性的架构设计与实施计划。
+
+<!--
+ElecSpecKit Skills 使用提示:
+在编写实施计划和进行架构研究时，可以使用以下 Skills：
+
+**研究与分析类**:
+- web-research: 技术方案调研
+- arxiv-search: 学术论文搜索
+- openalex-database: 学术数据库查询
+- docs-seeker: 查找技术文档和数据手册
+- citation-management: 管理参考文献
+
+**元器件选型类**:
+- mouser-component-search: 搜索元器件库存和价格（需要 API 密钥）
+
+**架构设计类**:
+- architecture-diagrams: 生成系统架构图
+- mermaid-tools: 创建电路框图、时序图
+- embedded-systems: 嵌入式系统设计建议
+
+**领域分析类** (v0.2.1 占位符):
+- circuit-commutation-analysis: 电路换流拓扑分析
+- thermal-simulation: 热设计仿真
+- emc-analysis: EMC/EMI 分析
+
+提示：在 research.md 中记录使用 Skills 的调研过程和结果
+-->
 
 ## 摘要
 

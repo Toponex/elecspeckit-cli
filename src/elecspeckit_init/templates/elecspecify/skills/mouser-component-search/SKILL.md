@@ -1,318 +1,379 @@
 ---
-name: "mouser-component-search"
-description: "搜索 Mouser 电子元器件库存和价格"
+name: mouser-component-search
+description: Search Mouser Electronics for component availability, pricing, datasheets, and lead times. Use when designing hardware, sourcing components, checking inventory, comparing prices, or finding datasheets for electronic parts.
+version: 1.0.0
 requires_api: true
+api_key: ""
 ---
 
-# mouser-component-search Skill
+# mouser-component-search
 
-## 概述
+Search Mouser Electronics for component availability, pricing, datasheets, and lead times.
 
-搜索 Mouser 电子元器件库存和价格。
+## Overview
 
-## 依赖
+The **mouser-component-search** Skill provides seamless integration with the Mouser Electronics API, enabling you to:
 
-### Python 库
+- Search for electronic components by part number, manufacturer, or keyword
+- Check real-time inventory availability and stock levels
+- Get current pricing information with quantity breaks
+- Access datasheet links directly from search results
+- View lead times for out-of-stock or backorder items
 
-```bash
-pip install requests
+This Skill is essential for hardware engineers, electronics designers, and anyone working with electronic components who needs to quickly verify component availability and pricing from Mouser Electronics.
+
+## When to Use This Skill
+
+Use the mouser-component-search Skill when you need to:
+
+- **Component Sourcing**: Find where to purchase specific electronic components
+- **BOM Validation**: Verify that components in your Bill of Materials are available
+- **Price Estimation**: Get cost estimates for component procurement
+- **Datasheet Access**: Quickly find official datasheets for components
+- **Lead Time Planning**: Check delivery timelines for project planning
+- **Alternative Parts**: Search for similar components when your first choice is unavailable
+
+## Usage
+
+The Skill uses a Python script (`scripts/mouser_search.py`) that interfaces with the Mouser Search API.
+
+**Example 1: Search for a microcontroller**
+```
+Please search Mouser for STM32F103C8T6 and show me the availability and pricing.
 ```
 
-**说明**: 需要 `requests` 库访问 Mouser API。
+**Example 2: Check multiple components**
+```
+I need to check Mouser inventory for these components:
+- LM358 op-amp
+- 1N4148 diode
+- BC547 transistor
 
-### API 密钥配置
+Please search each one and summarize the results.
+```
 
-需要配置 Mouser API 密钥：
+**Example 3: Get datasheet link**
+```
+Find the STM32F407VGT6 on Mouser and provide the datasheet link.
+```
+
+## Configuration
+
+### Prerequisites
+
+1. **Mouser API Account**: You must have a Mouser Electronics account and API access
+2. **API Key**: Obtain your API key from the Mouser Developer Portal: https://www.mouser.com/api-hub/
+3. **Python Dependencies**: The script requires Python 3.11+ with the `requests` library
+
+### API Key Setup
+
+The mouser-component-search Skill requires an API key to access the Mouser Search API. Follow these steps:
+
+#### Step 1: Obtain Your Mouser API Key
+
+1. Visit the Mouser Developer Portal: https://www.mouser.com/api-hub/
+2. Log in with your Mouser Electronics account (or create one if needed)
+3. Navigate to "My Account" → "API Keys"
+4. Generate a new API key for search operations
+5. Copy your API key (format: `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`)
+
+#### Step 2: Configure the Skill
+
+Use the `/elecspeckit.skillconfig update` command to set your API key:
 
 ```bash
-# 使用 skillconfig 命令配置
 /elecspeckit.skillconfig update mouser-component-search --api-key YOUR_API_KEY
 ```
 
-## 使用
+Replace `YOUR_API_KEY` with your actual Mouser API key.
 
-### 基本用法
+#### Step 3: Enable the Skill
 
-在 Claude Code 对话中直接调用：
+After configuring the API key, enable the Skill:
 
-```
-使用 mouser-component-search 搜索 STM32F407VGT6 的库存和价格
-```
-
-### 搜索特定参数的器件
-
-```
-在 Mouser 上搜索满足以下条件的运放：
-- 带宽 > 10MHz
-- 电源电压: 单电源 5V
-- 封装: SOIC-8
+```bash
+/elecspeckit.skillconfig enable mouser-component-search
 ```
 
-### 批量查询
+#### Step 4: Verify Configuration
 
-```
-使用 mouser-component-search 查询以下器件的价格和交期：
-- TPS54620RHLR
-- LMR14050SDDA
-- TLV62130RGT
-```
+List all Skills to verify the configuration:
 
-## 功能特性
-
-1. **实时库存查询**: 获取 Mouser 最新库存数据
-2. **价格阶梯**: 显示不同数量的单价
-3. **交期信息**: 预计到货时间和库存状态
-4. **参数过滤**: 根据电气参数筛选器件
-5. **替代料推荐**: 查找功能相似的替代器件
-
-## ElecSpeckit 集成指南
-
-### 在 /elecspeckit.plan 中使用
-
-**场景**: Phase 1 器件选型 - 查询库存和价格
-
-```
-用户: /elecspeckit.plan
-
-AI: Phase 1 器件选型 - 主控芯片选择
-
-    [内部调用] mouser-component-search:
-    - STM32F407VGT6 (首选方案)
-    - STM32F407VET6 (备选方案)
-
-    查询结果:
-    • STM32F407VGT6: 库存 5,200 片，单价 $8.50 (100+)，交期 2 周
-    • STM32F407VET6: 库存 1,800 片，单价 $7.20 (100+)，交期 4 周
-
-    推荐: 选择 STM32F407VGT6，库存充足，交期短
+```bash
+/elecspeckit.skillconfig list
 ```
 
-### 在 /elecspeckit.specify 中使用
+You should see `mouser-component-search` with status `enabled: true`.
 
-**场景**: 编写 BOM 规格时验证器件可获得性
+### Configuration File
 
-```
-用户: /elecspeckit.specify 电源管理模块
-
-AI: [内部调用] mouser-component-search:
-    验证关键器件可获得性:
-    - TPS54620RHLR (Buck 转换器)
-    - TLV62130RGT (降压稳压器)
-
-    库存状态: ✓ 所有器件库存充足
-
-    在 spec.md 中标注:
-    - 主要供应商: Mouser (库存验证通过)
-    - 备选供应商: DigiKey, Arrow
-```
-
-### 在 /elecspeckit.tasks 中使用
-
-**场景**: 任务拆分时估算采购成本和周期
-
-```
-用户: /elecspeckit.tasks
-
-AI: 任务拆分 - 采购计划
-
-    [内部调用] mouser-component-search:
-    批量查询 BOM 中 50 个器件
-
-    生成采购任务:
-    - Task 1: 采购长交期器件 (交期 > 4 周)，预算 $2,500
-    - Task 2: 采购常规器件 (交期 < 2 周)，预算 $1,800
-    - Task 3: 备货风险器件 (库存 < 1000)，额外采购 20%
-```
-
-### 典型使用流程
-
-1. **器件选型阶段**: 查询候选器件库存、价格、交期
-2. **BOM 编制阶段**: 验证所有器件可获得性
-3. **成本估算阶段**: 计算不同数量阶梯的总成本
-4. **风险评估阶段**: 识别长交期和低库存器件
-5. **采购计划阶段**: 制定分批采购策略
-
-## 最佳实践
-
-### ✅ 推荐做法
-
-- 使用完整的制造商型号（如 "TPS54620RHLR" 而不是 "TPS54620"）
-- 查询多个候选料号，避免单一来源风险
-- 关注库存数量，低于 1000 片时考虑备选方案
-- 记录查询时间，器件价格和库存会变化
-
-### ❌ 避免做法
-
-- 不要依赖单一供应商（Mouser 缺货时需要备选渠道）
-- 不要忽略最小起订量（MOQ）
-- 不要使用模糊的器件名称（如 "运放"、"稳压器"）
-- 不要在未确认库存的情况下锁定设计方案
-
-## 示例
-
-### 示例 1: 查询单个器件
-
-```
-用户: 使用 mouser-component-search 查询 TPS54620RHLR 的详细信息
-
-AI: [调用 Mouser API]
-
-    查询结果:
-
-    器件: TPS54620RHLR
-    制造商: Texas Instruments
-    描述: 6A 同步降压转换器，VQFN-14
-
-    库存信息:
-    • Mouser 库存: 3,420 片
-    • 工厂库存: 15,000+ 片
-
-    价格阶梯:
-    •   1-9:   $2.85/片
-    •  10-99:  $2.35/片
-    • 100-499: $1.98/片
-    • 500+:    $1.75/片
-
-    交期:
-    • 现货: 3,420 片，1-2 个工作日发货
-    • 补货: 预计 4-6 周
-
-    数据手册: [链接]
-```
-
-### 示例 2: 参数搜索
-
-```
-用户: 在 Mouser 搜索满足以下条件的 LDO：
-- 输出电流 > 500mA
-- 输入电压范围: 3.3V - 5.5V
-- 输出电压: 3.3V
-- 封装: SOT-23-5
-
-AI: [调用 Mouser API 参数搜索]
-
-    找到 8 个匹配器件:
-
-    1. AP2114H-3.3TRG1
-       - 输出电流: 1A
-       - 压差: 250mV @ 1A
-       - 库存: 15,200 片
-       - 单价: $0.35 (100+)
-       ✓ 推荐（性价比高，库存充足）
-
-    2. LM1117MP-3.3/NOPB
-       - 输出电流: 800mA
-       - 压差: 1.2V @ 800mA
-       - 库存: 8,500 片
-       - 单价: $0.48 (100+)
-
-    3. MIC5504-3.3YM5-TR
-       - 输出电流: 500mA
-       - 压差: 165mV @ 500mA
-       - 库存: 6,100 片
-       - 单价: $0.52 (100+)
-       ✓ 推荐（低压差）
-
-    [显示其他 5 个器件...]
-```
-
-### 示例 3: BOM 批量查询
-
-```
-用户: 批量查询以下 BOM 器件的库存和总成本（数量 100 套）
-
-BOM:
-- STM32F407VGT6 x 1
-- TPS54620RHLR x 2
-- LM1117MP-3.3 x 3
-- 0805 10uF 电容 x 20
-- 0603 100nF 电容 x 50
-
-AI: [批量调用 Mouser API]
-
-    BOM 查询结果 (100 套):
-
-    | 料号              | 单套用量 | 单价(100+) | 单套成本 | 库存状态 |
-    |-------------------|---------|-----------|----------|---------|
-    | STM32F407VGT6     | 1       | $8.50     | $8.50    | ✓ 5,200 |
-    | TPS54620RHLR      | 2       | $1.98     | $3.96    | ✓ 3,420 |
-    | LM1117MP-3.3      | 3       | $0.48     | $1.44    | ✓ 8,500 |
-    | 0805 10uF/25V     | 20      | $0.08     | $1.60    | ✓ 50K+  |
-    | 0603 100nF/50V    | 50      | $0.02     | $1.00    | ✓ 100K+ |
-
-    汇总:
-    • 单套成本: $16.50
-    • 100 套总成本: $1,650
-    • 所有器件库存充足 ✓
-    • 预计交期: 1-2 周
-
-    风险评估:
-    ⚠ TPS54620RHLR 库存相对紧张 (3,420 片)
-      建议: 考虑提前备货或寻找替代料
-```
-
-## 故障排除
-
-### 问题: API 密钥无效
-
-**解决方案**:
-1. 检查 `.elecspecify/memory/skill_config.json` 中的 `api_key` 是否正确
-2. 访问 Mouser 官网申请新的 API 密钥: https://www.mouser.com/api-hub/
-3. 确认 API 密钥已激活（需要邮箱验证）
-
-### 问题: 查询超时
-
-**解决方案**:
-1. 检查网络连接
-2. 减少批量查询的器件数量
-3. 稍后重试（可能是 Mouser API 限流）
-
-### 问题: 找不到器件
-
-**解决方案**:
-1. 确认制造商型号完整正确
-2. 尝试使用 Mouser 料号 (Mouser Part Number)
-3. 检查器件是否停产或 Mouser 未代理
-
-## 技术细节
-
-### API 配置
-
-skill_config.json 配置示例:
+The API key is stored in `.elecspecify/memory/skill_config.json`:
 
 ```json
 {
-  "mouser-component-search": {
-    "enabled": true,
-    "requires_api": true,
-    "api_key": "your-mouser-api-key-here",
-    "description": "搜索 Mouser 电子元器件库存和价格"
+  "skills": {
+    "mouser-component-search": {
+      "enabled": true,
+      "requires_api": true,
+      "api_key": "YOUR_API_KEY",
+      "description": "Mouser component availability and pricing search"
+    }
   }
 }
 ```
 
-### API 限制
+**Security Note**: The `skill_config.json` file should have restricted permissions. Never commit this file to version control or share your API key publicly.
 
-- **请求频率**: 1000 次/天 (免费账户)
-- **批量查询**: 建议每次不超过 50 个器件
-- **响应时间**: 通常 1-3 秒
+## Response Format
 
-### 数据来源
+The Skill returns structured JSON data:
 
-- 实时库存数据来自 Mouser 数据库
-- 价格更新频率: 每小时
-- 数据手册链接直接指向 Mouser 网站
+### Successful Search
 
-## 相关 Skills
+```json
+{
+  "success": true,
+  "results": [
+    {
+      "part_number": "STM32F103C8T6",
+      "manufacturer": "STMicroelectronics",
+      "stock": 5000,
+      "price": "$2.50",
+      "datasheet_url": "https://www.mouser.com/datasheet/...",
+      "lead_time": "10 weeks"
+    }
+  ]
+}
+```
 
-- **docs-seeker**: 查找本地的器件数据手册
-- **hardware-data-analysis**: 分析 BOM 成本趋势
-- **citation-management**: 管理器件数据手册引用
+### No Results Found
 
+```json
+{
+  "success": true,
+  "results": []
+}
+```
 
+### Error Response
+
+```json
+{
+  "success": false,
+  "error": "API key not configured. Please use /elecspeckit.skillconfig update mouser-component-search --api-key YOUR_KEY to configure"
+}
+```
+
+## Error Handling
+
+The Skill handles various error scenarios gracefully:
+
+### 1. API Key Not Configured
+
+**Error**: `API key not configured`
+
+**Solution**: Configure your API key using `/elecspeckit.skillconfig update mouser-component-search --api-key YOUR_KEY`
+
+### 2. Invalid API Key
+
+**Error**: `Invalid API key, please check your configuration`
+
+**Solution**: Verify your API key is correct. Generate a new key from the Mouser Developer Portal if needed.
+
+### 3. Rate Limit Exceeded
+
+**Error**: `API rate limit exceeded, please try again later`
+
+**Solution**: Mouser API has rate limits (50 requests/call, 30 calls/min). Wait a few minutes before trying again.
+
+### 4. Network Issues
+
+**Error**: `Unable to connect to Mouser API, please check network connection`
+
+**Solution**: Verify your internet connection and that `api.mouser.com` is accessible from your network.
+
+### 5. No Results
+
+**Behavior**: Returns `"success": true` with empty `results` array
+
+**Meaning**: The search query didn't match any components. Try:
+- Checking the spelling of the part number
+- Using a more generic search term
+- Searching by manufacturer name
+
+## API Limits and Best Practices
+
+### Rate Limits
+
+- **50 requests per call**
+- **30 calls per minute**
+
+The Skill automatically handles rate limit errors and provides clear feedback.
+
+### Best Practices
+
+1. **Be Specific**: Use exact part numbers when possible for fastest results
+2. **Batch Searches**: If checking multiple components, search them in one conversation to minimize API calls
+3. **Cache Results**: Component availability changes slowly; avoid redundant searches
+4. **Respect Limits**: Don't implement automated loops that could exceed rate limits
+
+## Technical Details
+
+### Script Location
+
+- **Script**: `scripts/mouser_search.py`
+- **Language**: Python 3.11+
+- **Dependencies**: `requests>=2.31.0`
+
+### API Endpoint
+
+- **URL**: `https://api.mouser.com/api/v1/search/keyword`
+- **Method**: GET
+- **Authentication**: API Key (Header: `X-API-Key`)
+- **Response Format**: JSON
+
+### Configuration Path
+
+- **Config File**: `~/.elecspecify/memory/skill_config.json`
+- **Permissions**: 0600 (Unix-like systems)
+
+## Examples
+
+### Example 1: Basic Component Search
+
+**User Request**:
+```
+Search Mouser for STM32F103C8T6
+```
+
+**Claude Response** (using this Skill):
+```
+I found the STM32F103C8T6 on Mouser:
+
+- Part Number: STM32F103C8T6
+- Manufacturer: STMicroelectronics
+- Stock: 5,000 units available
+- Price: $2.50 (unit price)
+- Datasheet: [View PDF](https://www.mouser.com/datasheet/...)
+- Lead Time: 10 weeks
+
+This microcontroller is readily available with good stock levels.
+```
+
+### Example 2: Price Comparison
+
+**User Request**:
+```
+I'm comparing LM358 op-amps from different sources. What's Mouser's price?
+```
+
+**Claude Response** (using this Skill):
+```
+Checking Mouser for LM358 op-amp...
+
+Mouser has LM358 in stock:
+- Price: $0.35 per unit
+- Stock: 15,000+ units
+- Manufacturer: Texas Instruments
+- Datasheet: [Available here](...)
+
+This is a commonly stocked part with excellent availability.
+```
+
+### Example 3: BOM Validation
+
+**User Request**:
+```
+I'm finalizing my BOM. Can you check if these parts are available on Mouser?
+- STM32F407VGT6
+- AMS1117-3.3
+- 0805 10uF capacitors
+```
+
+**Claude Response** (using this Skill):
+```
+I'll check each component on Mouser:
+
+1. STM32F407VGT6 (Microcontroller):
+   - Stock: 2,500 units
+   - Price: $8.50
+   - Status: Available
+
+2. AMS1117-3.3 (Voltage Regulator):
+   - Stock: 8,000 units
+   - Price: $0.45
+   - Status: Available
+
+3. 0805 10uF Capacitors:
+   - Multiple options available
+   - Price range: $0.10 - $0.25
+   - Status: Available
+
+All components are currently in stock on Mouser.
+```
+
+## Troubleshooting
+
+### Problem: Skill Not Responding
+
+**Check**:
+1. Is the Skill enabled? Run `/elecspeckit.skillconfig list`
+2. Is the API key configured? Check `.elecspecify/memory/skill_config.json`
+3. Is Python 3.11+ installed? Run `python --version`
+4. Is the `requests` library installed? Run `pip list | grep requests`
+
+### Problem: "Invalid API Key" Error
+
+**Solutions**:
+1. Verify your API key at https://www.mouser.com/api-hub/
+2. Check for typos in the API key configuration
+3. Generate a new API key if the current one is expired or revoked
+4. Reconfigure using `/elecspeckit.skillconfig update mouser-component-search --api-key NEW_KEY`
+
+### Problem: Empty Results for Valid Part Numbers
+
+**Possible Causes**:
+1. Part number not available at Mouser (try other distributors)
+2. Part number discontinued or obsolete
+3. Typo in part number (check manufacturer's website)
+4. Part is distributor-specific (not sold through Mouser)
+
+**Solutions**:
+- Try broader search terms
+- Search by manufacturer name
+- Check Mouser's website directly to verify availability
+
+## Version History
+
+- **v1.0.0** (2025-12-16): Initial release
+  - Mouser Search API integration
+  - Real-time inventory checking
+  - Price and datasheet retrieval
+  - Error handling for API key issues
+  - Rate limit handling
+
+## Related Skills
+
+- **docs-seeker**: Find component datasheets from multiple sources
+- **web-research**: Research component specifications and alternatives
+- **embedded-systems**: Get guidance on component selection for embedded designs
+
+## Support
+
+For issues specific to this Skill:
+- Check the ElecSpeckit documentation: https://github.com/your-org/elecspeckit-cli
+- Report bugs: https://github.com/your-org/elecspeckit-cli/issues
+
+For Mouser API issues:
+- Mouser Developer Portal: https://www.mouser.com/api-hub/
+- Mouser Support: https://www.mouser.com/contact-us/
+
+## License
+
+This Skill follows the ElecSpeckit CLI license. See the main repository LICENSE file.
 
 ---
 
-**版本**: v0.2.0
-**维护者**: ElecSpeckit Team
-**许可证**: Apache License 2.0
+**Last Updated**: 2025-12-16
+**Skill Type**: Type 2 (API Integration)
+**Status**: Production Ready

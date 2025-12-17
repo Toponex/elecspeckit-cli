@@ -163,19 +163,43 @@ def copy_directory_tree(
             relative_path = source_file.relative_to(source_dir)
             target_file = target_dir / relative_path
 
-            # 读取源文件内容
-            content = source_file.read_text(encoding="utf-8")
+            # 确保目标目录存在
+            ensure_directory_exists(target_file.parent)
 
             # 检查是否需要跳过
             if target_file.exists() and not overwrite:
                 change = FileChange(
                     path=target_file, change_type="skipped", message="文件已存在,跳过"
                 )
+                summary.add_change(change)
             else:
-                # 写入或更新文件
-                change = write_or_update_file(target_file, content, create_backup=create_backup)
+                # 使用二进制模式复制文件（支持文本和二进制文件）
+                import shutil
 
-            summary.add_change(change)
+                # 创建备份（如果需要且目标文件存在）
+                if create_backup and target_file.exists():
+                    from datetime import datetime
+                    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+                    backup_file = target_file.with_suffix(f"{target_file.suffix}.bak.{timestamp}")
+                    shutil.copy2(target_file, backup_file)
+
+                    change = FileChange(
+                        path=backup_file,
+                        change_type="backed_up",
+                        message=f"备份到 {backup_file.name}"
+                    )
+                    summary.add_change(change)
+
+                # 复制文件
+                shutil.copy2(source_file, target_file)
+
+                change_type = "updated" if target_file.exists() else "created"
+                change = FileChange(
+                    path=target_file,
+                    change_type=change_type,
+                    message="文件已复制"
+                )
+                summary.add_change(change)
 
     return summary
 

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "elecspeckit-cli"
-version = "0.1.0"
+version = "0.2.1"
 description = "ElecSpeckit CLI - AI-Driven Specification-Based Development Workflow Tool for Hardware/Electronics Projects"
 readme = "README.md"
 requires-python = ">=3.11"
