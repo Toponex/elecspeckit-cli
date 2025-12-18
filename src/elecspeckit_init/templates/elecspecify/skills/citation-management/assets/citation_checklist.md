@@ -1,386 +1,352 @@
-# Citation Quality Checklist
+# Hardware Design Citation Quality Checklist
 
-Use this checklist to ensure your citations are accurate, complete, and properly formatted before final submission.
+Use this checklist to ensure your technical document citations are accurate, complete, and properly formatted before final submission of hardware design documentation.
 
 ## Pre-Submission Checklist
 
-### ✓ Metadata Accuracy
+### ✓ Technical Document Accuracy
 
-- [ ] All author names are correct and properly formatted
-- [ ] Article titles match the actual publication
-- [ ] Journal/conference names are complete (not abbreviated unless required)
-- [ ] Publication years are accurate
-- [ ] Volume and issue numbers are correct
-- [ ] Page ranges are accurate
+- [ ] All standard numbers include year/version (e.g., IEEE 802.11-2020)
+- [ ] Vendor document revision codes are specified (e.g., Rev. C)
+- [ ] Patent numbers include country code and kind code
+- [ ] Standard organization names are complete and correct
+- [ ] Vendor/manufacturer names are correct and consistent
 
 ### ✓ Required Fields
 
-- [ ] All @article entries have: author, title, journal, year
-- [ ] All @book entries have: author/editor, title, publisher, year
-- [ ] All @inproceedings entries have: author, title, booktitle, year
-- [ ] Modern papers (2000+) include DOI when available
+- [ ] All @standard entries have: title, number, organization, year
+- [ ] All @manual entries have: title, organization, year, number (document ID)
+- [ ] All @patent entries have: title, number, year
+- [ ] All @techreport entries have: title, institution, year
+- [ ] IEEE standards include DOI when available
 - [ ] All entries have unique citation keys
 
-### ✓ DOI Verification
+### ✓ Standard Version Currency
 
-- [ ] All DOIs are properly formatted (10.XXXX/...)
-- [ ] DOIs resolve correctly to the article
-- [ ] No DOI prefix in the BibTeX field (no "doi:" or "https://doi.org/")
-- [ ] Metadata from CrossRef matches your BibTeX entry
-- [ ] Run: `python scripts/validate_citations.py references.bib --check-dois`
+- [ ] All cited standards are current (not superseded)
+- [ ] If citing superseded standard, note status in comments or `note` field
+- [ ] Standard edition numbers are correct (for IEC, ISO standards)
+- [ ] Standard year matches the version actually referenced in design
+- [ ] Run: `python scripts/validate_citations.py refs.bib --check-standard-status`
+
+### ✓ Vendor Document Verification
+
+- [ ] Vendor document numbers match actual documents
+- [ ] Revision letters are the latest version (unless citing specific revision)
+- [ ] Device/part numbers are correct
+- [ ] Document types are correctly identified (datasheet, app note, user guide)
+- [ ] Vendor names use standard abbreviations (TI, AD, ST, NXP, etc.)
 
 ### ✓ Formatting Consistency
 
-- [ ] Page ranges use double hyphen (--) not single (-)
-- [ ] No "pp." prefix in pages field
-- [ ] Author names use "and" separator (not semicolon or ampersand)
-- [ ] Capitalization protected in titles ({AlphaFold}, {CRISPR}, etc.)
-- [ ] Month names use standard abbreviations if included
-- [ ] Citation keys follow consistent format
+- [ ] Standard numbers follow organization format
+  - IEEE: IEEE 802.11-2020 (not IEEE 802.11/2020)
+  - IEC: IEC 61010-1:2020 (colon before year)
+  - IPC: IPC-2221B (hyphen, revision letter)
+  - JEDEC: JESD22-A114 (no spaces)
+- [ ] Citation keys follow consistent format (org+number+year)
+- [ ] Organization names are not abbreviated in `organization` field
+- [ ] Revision codes in `note` field format: "Rev. C" or "Revision B"
+- [ ] Patent numbers: US10245678B2 (no spaces or hyphens)
 
 ### ✓ Duplicate Detection
 
-- [ ] No duplicate DOIs in bibliography
+- [ ] No duplicate standard numbers
+- [ ] No duplicate vendor document IDs
+- [ ] No duplicate patent numbers
 - [ ] No duplicate citation keys
-- [ ] No near-duplicate titles
-- [ ] Preprints updated to published versions when available
-- [ ] Run: `python scripts/validate_citations.py references.bib`
+- [ ] Different revisions of same document properly distinguished
+- [ ] Run: `python scripts/validate_citations.py refs.bib --check-duplicates`
 
-### ✓ Special Characters
+### ✓ URLs and DOIs
 
-- [ ] Accented characters properly formatted (e.g., {\"u} for ü)
-- [ ] Mathematical symbols use LaTeX commands
-- [ ] Chemical formulas properly formatted
-- [ ] No unescaped special characters (%, &, $, #, etc.)
+- [ ] IEEE standard DOIs are correctly formatted
+- [ ] URLs resolve to correct documents
+- [ ] Vendor document URLs point to official vendor websites
+- [ ] Patent URLs use stable services (patents.google.com, USPTO, EPO)
+- [ ] No broken links
+- [ ] Run: `python scripts/validate_citations.py refs.bib --check-urls`
 
-### ✓ BibTeX Syntax
+### ✓ Special Characters and Formatting
 
-- [ ] All entries have balanced braces {}
-- [ ] Fields separated by commas
-- [ ] No comma after last field in each entry
-- [ ] Valid entry types (@article, @book, etc.)
-- [ ] Run: `python scripts/validate_citations.py references.bib`
+- [ ] BibTeX special characters properly escaped
+- [ ] Technical terms with special capitalization protected with braces
+  - {IEEE}, {JEDEC}, {IEC}, {ISO}
+  - {PCB}, {EMI}, {EMC}, {RF}
+  - {WiFi}, {Bluetooth}, {USB}
+- [ ] Chemical formulas use LaTeX math mode if needed
+- [ ] No smart quotes (use straight quotes)
+- [ ] Accented characters in author names handled correctly
 
-### ✓ File Organization
+### ✓ Technical Accuracy
 
-- [ ] Bibliography sorted in logical order (by year, author, or key)
-- [ ] Consistent formatting throughout
-- [ ] No formatting inconsistencies between entries
-- [ ] Run: `python scripts/format_bibtex.py references.bib --sort year`
+- [ ] Parameter specifications match cited datasheet
+- [ ] Standard requirements match cited version
+- [ ] Component ratings match vendor specifications
+- [ ] Test method references are correct
+- [ ] Compliance claims match cited standards
 
-## Automated Validation
+### ✓ Design Document Integration
 
-### Step 1: Format and Clean
+- [ ] All standards mentioned in design doc are in bibliography
+- [ ] All vendor documents referenced are cited
+- [ ] Patent citations match any IP discussions
+- [ ] Test standards match test plan references
+- [ ] Compliance standards match certification claims
 
-```bash
-python scripts/format_bibtex.py references.bib \
-  --deduplicate \
-  --sort year \
-  --descending \
-  --output clean_references.bib
+### ✓ Regulatory and Compliance
+
+- [ ] Safety standards are current and applicable
+- [ ] EMC standards match target markets/regions
+- [ ] Regional standards correctly identified (UL vs IEC vs EN)
+- [ ] Certification requirements documented in `note` field
+- [ ] Compliance status noted where relevant
+
+## Hardware-Specific Validation Checks
+
+### Power Supply Design
+
+- [ ] IEC 61010-1 or IEC 62368-1 cited for safety
+- [ ] IEC 61000-6-3 cited for EMC emissions
+- [ ] IEC 61000-6-2 cited for EMC immunity (if industrial)
+- [ ] IEEE 519 cited if grid-connected
+- [ ] UL or EN equivalents cited for regional certification
+
+### PCB Design
+
+- [ ] IPC-2221 or IPC-2222 cited for design rules
+- [ ] IPC-6012 cited for board qualification
+- [ ] IPC-A-610 cited for acceptability criteria
+- [ ] IEC 61000-4-2 cited for ESD requirements
+- [ ] Specific spacing/clearance requirements match standard tables
+
+### Wireless/RF Products
+
+- [ ] IEEE 802.11 (WiFi) or 802.15.4 (Zigbee) cited if applicable
+- [ ] FCC Part 15 or equivalent regional standard cited
+- [ ] IEC 61000-4-3 cited for RF immunity
+- [ ] CISPR 32 or EN 55032 cited for emissions
+- [ ] Antenna design references include IEEE papers or app notes
+
+### Motor Drives/Power Electronics
+
+- [ ] IEC 61800 series cited for adjustable speed drives
+- [ ] IEEE 519 cited for harmonic control
+- [ ] UL 508C or IEC 61800-5-1 cited for power conversion safety
+- [ ] Relevant semiconductor vendor app notes cited
+
+### Embedded Systems
+
+- [ ] Microcontroller datasheets cited with correct revision
+- [ ] RTOS documentation cited if applicable
+- [ ] Communication protocol standards cited (SPI, I2C, CAN, etc.)
+- [ ] Relevant IEEE or vendor reference designs cited
+
+### Test and Measurement
+
+- [ ] JESD22 series cited for reliability testing
+- [ ] IEC 61000-4-x cited for EMC test methods
+- [ ] Relevant test equipment vendor manuals cited
+- [ ] Calibration standards cited if applicable
+
+## Citation Style Guidelines
+
+### Standard Citations
+
+**Correct**:
+```bibtex
+@standard{ieee80211_2020,
+  title        = {IEEE Standard for Information Technology--Telecommunications...},
+  number       = {IEEE 802.11-2020},
+  organization = {Institute of Electrical and Electronics Engineers},
+  year         = {2020},
+  doi          = {10.1109/IEEESTD.2021.9363693}
+}
 ```
 
-**What this does**:
-- Removes duplicates
-- Standardizes formatting
-- Fixes common issues (page ranges, DOI format, etc.)
-- Sorts by year (newest first)
+**Incorrect**:
+- Missing year in number field
+- Abbreviated organization name
+- Missing DOI for IEEE standards
+- Inconsistent citation key format
 
-### Step 2: Validate
+### Vendor Document Citations
 
-```bash
-python scripts/validate_citations.py clean_references.bib \
-  --check-dois \
-  --report validation_report.json \
-  --verbose
+**Correct**:
+```bibtex
+@manual{ti_ucc28740,
+  title        = {UCC28740 65-kHz, Flyback-Switch Mode Power Supply Controller},
+  number       = {SLUSCJ3},
+  organization = {Texas Instruments},
+  year         = {2019},
+  note         = {Rev. C}
+}
 ```
 
-**What this does**:
-- Checks required fields
-- Verifies DOIs resolve
-- Detects duplicates
-- Validates syntax
-- Generates detailed report
+**Incorrect**:
+- Missing revision in note field
+- Abbreviated vendor name in organization field
+- Missing document number
+- Incorrect year
 
-### Step 3: Review Report
+### Patent Citations
+
+**Correct**:
+```bibtex
+@patent{us10245678b2,
+  title    = {Power Management System for Integrated Circuits},
+  number   = {US10245678B2},
+  author   = {Smith, John A. and Lee, Robert W.},
+  year     = {2019},
+  assignee = {Texas Instruments Incorporated}
+}
+```
+
+**Incorrect**:
+- Spaces or hyphens in patent number
+- Missing kind code (B2, A1, etc.)
+- Missing assignee field
+- Incorrect author format
+
+## Common Issues and Fixes
+
+### Issue: Standard Superseded
+
+**Problem**: Citing IEC 60950-1:2005 when IEC 62368-1:2018 is now current
+
+**Fix**:
+```bibtex
+% Use current standard
+@standard{iec62368_1_2018,
+  title        = {Audio/video, information and communication technology equipment - Part 1: Safety requirements},
+  number       = {IEC 62368-1:2018},
+  organization = {International Electrotechnical Commission},
+  year         = {2018},
+  note         = {Supersedes IEC 60950-1:2005}
+}
+```
+
+### Issue: Missing Revision Code
+
+**Problem**: Citing TI datasheet without revision
+
+**Fix**:
+```bibtex
+% Check datasheet for revision (usually on first or last page)
+@manual{ti_doc,
+  ...
+  note         = {Rev. D}  % Add specific revision
+}
+```
+
+### Issue: Ambiguous Standard Reference
+
+**Problem**: Design says "per IEEE 802.11" without version
+
+**Fix**:
+- Check which specific version was used
+- Update citation to include year
+- Update design document to reference specific version
+
+### Issue: Vendor Document Not Found
+
+**Problem**: Cannot locate vendor document by number
+
+**Fix**:
+- Verify document number spelling/format
+- Check for document number changes/updates
+- Use vendor search with device part number
+- Contact vendor technical support
+
+## Final Validation Steps
+
+### Automated Checks
 
 ```bash
+# Run complete validation
+python scripts/validate_citations.py hardware_refs.bib \
+  --check-standards \
+  --check-vendors \
+  --check-patents \
+  --check-urls \
+  --report validation_report.json
+
+# Review report
 cat validation_report.json
 ```
 
-**Address any**:
-- **Errors**: Must fix (missing fields, broken DOIs, syntax errors)
-- **Warnings**: Should fix (missing recommended fields, formatting issues)
-- **Duplicates**: Remove or consolidate
+### Manual Review
 
-### Step 4: Final Check
+1. **Spot-check critical citations**:
+   - Safety standards
+   - Key vendor datasheets
+   - Referenced patents
 
+2. **Cross-reference with design documents**:
+   - All cited standards mentioned in design spec
+   - All component datasheets in BOM are cited
+   - Test standards match test plan
+
+3. **Verify compliance claims**:
+   - Standards support certification claims
+   - Regional variants correctly cited
+   - Version currency verified
+
+4. **Check citation formatting**:
+   - Consistent citation key style
+   - Proper BibTeX field usage
+   - Correct entry types
+
+## Pre-Submission Summary
+
+Before submitting design documentation with citations:
+
+- [ ] All technical documents cited with complete metadata
+- [ ] Standard versions are current and correct
+- [ ] Vendor document revisions specified
+- [ ] All automated validation checks pass
+- [ ] Manual spot-checks completed
+- [ ] Citations match design document references
+- [ ] Compliance requirements documented
+- [ ] URLs tested and resolve correctly
+- [ ] BibTeX file validates without errors
+- [ ] Bibliography formatted consistently
+
+## Tools Reference
+
+**Validation**:
 ```bash
-python scripts/validate_citations.py clean_references.bib --verbose
+python scripts/validate_citations.py refs.bib
 ```
 
-**Goal**: Zero errors, minimal warnings
-
-## Manual Review Checklist
-
-### Critical Citations (Top 10-20 Most Important)
-
-For your most important citations, manually verify:
-
-- [ ] Visit DOI link and confirm it's the correct article
-- [ ] Check author names against the actual publication
-- [ ] Verify year matches publication date
-- [ ] Confirm journal/conference name is correct
-- [ ] Check that volume/pages match
-
-### Common Issues to Watch For
-
-**Missing Information**:
-- [ ] No DOI for papers published after 2000
-- [ ] Missing volume or page numbers for journal articles
-- [ ] Missing publisher for books
-- [ ] Missing conference location for proceedings
-
-**Formatting Errors**:
-- [ ] Single hyphen in page ranges (123-145 → 123--145)
-- [ ] Ampersands in author lists (Smith & Jones → Smith and Jones)
-- [ ] Unprotected acronyms in titles (DNA → {DNA})
-- [ ] DOI includes URL prefix (https://doi.org/10.xxx → 10.xxx)
-
-**Metadata Mismatches**:
-- [ ] Author names differ from publication
-- [ ] Year is online-first instead of print publication
-- [ ] Journal name abbreviated when it should be full
-- [ ] Volume/issue numbers swapped
-
-**Duplicates**:
-- [ ] Same paper cited with different citation keys
-- [ ] Preprint and published version both cited
-- [ ] Conference paper and journal version both cited
-
-## Field-Specific Checks
-
-### Biomedical Sciences
-
-- [ ] PubMed Central ID (PMCID) included when available
-- [ ] MeSH terms appropriate (if using)
-- [ ] Clinical trial registration number included (if applicable)
-- [ ] All references to treatments/drugs accurately cited
-
-### Computer Science
-
-- [ ] arXiv ID included for preprints
-- [ ] Conference proceedings properly cited (not just "NeurIPS")
-- [ ] Software/dataset citations include version numbers
-- [ ] GitHub links stable and permanent
-
-### General Sciences
-
-- [ ] Data availability statements properly cited
-- [ ] Retracted papers identified and removed
-- [ ] Preprints checked for published versions
-- [ ] Supplementary materials referenced if critical
-
-## Final Pre-Submission Steps
-
-### 1 Week Before Submission
-
-- [ ] Run full validation with DOI checking
-- [ ] Fix all errors and critical warnings
-- [ ] Manually verify top 10-20 most important citations
-- [ ] Check for any retracted papers
-
-### 3 Days Before Submission
-
-- [ ] Re-run validation after any manual edits
-- [ ] Ensure all in-text citations have corresponding bibliography entries
-- [ ] Ensure all bibliography entries are cited in text
-- [ ] Check citation style matches journal requirements
-
-### 1 Day Before Submission
-
-- [ ] Final validation check
-- [ ] LaTeX compilation successful with no warnings
-- [ ] PDF renders all citations correctly
-- [ ] Bibliography appears in correct format
-- [ ] No placeholder citations (Smith et al. XXXX)
-
-### Submission Day
-
-- [ ] One final validation run
-- [ ] No last-minute edits without re-validation
-- [ ] Bibliography file included in submission package
-- [ ] Figures/tables referenced in text match bibliography
-
-## Quality Metrics
-
-### Excellent Bibliography
-
-- ✓ 100% of entries have DOIs (for modern papers)
-- ✓ Zero validation errors
-- ✓ Zero missing required fields
-- ✓ Zero broken DOIs
-- ✓ Zero duplicates
-- ✓ Consistent formatting throughout
-- ✓ All citations manually spot-checked
-
-### Acceptable Bibliography
-
-- ✓ 90%+ of modern entries have DOIs
-- ✓ Zero high-severity errors
-- ✓ Minor warnings only (e.g., missing recommended fields)
-- ✓ Key citations manually verified
-- ✓ Compilation succeeds without errors
-
-### Needs Improvement
-
-- ✗ Missing DOIs for recent papers
-- ✗ High-severity validation errors
-- ✗ Broken or incorrect DOIs
-- ✗ Duplicate entries
-- ✗ Inconsistent formatting
-- ✗ Compilation warnings or errors
-
-## Emergency Fixes
-
-If you discover issues at the last minute:
-
-### Broken DOI
-
+**Format and clean**:
 ```bash
-# Find correct DOI
-# Option 1: Search CrossRef
-# https://www.crossref.org/
-
-# Option 2: Search on publisher website
-# Option 3: Google Scholar
-
-# Re-extract metadata
-python scripts/extract_metadata.py --doi CORRECT_DOI
+python scripts/format_bibtex.py refs.bib --output clean_refs.bib
 ```
 
-### Missing Information
-
+**Extract metadata**:
 ```bash
-# Extract from DOI
-python scripts/extract_metadata.py --doi 10.xxxx/yyyy
-
-# Or from PMID (biomedical)
-python scripts/extract_metadata.py --pmid 12345678
-
-# Or from arXiv
-python scripts/extract_metadata.py --arxiv 2103.12345
+python scripts/docnum_to_bibtex.py "IEEE 802.11-2020"
+python scripts/extract_metadata.py --standard "IEC 61010-1:2020"
 ```
 
-### Duplicate Entries
-
+**Search databases**:
 ```bash
-# Auto-remove duplicates
-python scripts/format_bibtex.py references.bib \
-  --deduplicate \
-  --output fixed_references.bib
+python scripts/search_ieee_xplore.py "power electronics"
+python scripts/search_standards.py "EMC" --organizations "IEC,IEEE"
 ```
 
-### Formatting Errors
+## Related Resources
 
-```bash
-# Auto-fix common issues
-python scripts/format_bibtex.py references.bib \
-  --output fixed_references.bib
+- `ieee_xplore_search.md`: IEEE technical literature search guide
+- `standards_databases.md`: Technical standards search guide
+- `metadata_extraction.md`: Citation metadata extraction guide
+- `bibtex_formatting.md`: BibTeX formatting guidelines
+- `citation_validation.md`: Citation validation procedures
 
-# Then validate
-python scripts/validate_citations.py fixed_references.bib
-```
+## Notes
 
-## Long-Term Best Practices
-
-### During Research
-
-- [ ] Add citations to bibliography file as you find them
-- [ ] Extract metadata immediately using DOI
-- [ ] Validate after every 10-20 additions
-- [ ] Keep bibliography file under version control
-
-### During Writing
-
-- [ ] Cite as you write
-- [ ] Use consistent citation keys
-- [ ] Don't delay adding references
-- [ ] Validate weekly
-
-### Before Submission
-
-- [ ] Allow 2-3 days for citation cleanup
-- [ ] Don't wait until the last day
-- [ ] Automate what you can
-- [ ] Manually verify critical citations
-
-## Tool Quick Reference
-
-### Extract Metadata
-
-```bash
-# From DOI
-python scripts/doi_to_bibtex.py 10.1038/nature12345
-
-# From multiple sources
-python scripts/extract_metadata.py \
-  --doi 10.1038/nature12345 \
-  --pmid 12345678 \
-  --arxiv 2103.12345 \
-  --output references.bib
-```
-
-### Validate
-
-```bash
-# Basic validation
-python scripts/validate_citations.py references.bib
-
-# With DOI checking (slow but thorough)
-python scripts/validate_citations.py references.bib --check-dois
-
-# Generate report
-python scripts/validate_citations.py references.bib \
-  --report validation.json \
-  --verbose
-```
-
-### Format and Clean
-
-```bash
-# Format and fix issues
-python scripts/format_bibtex.py references.bib
-
-# Remove duplicates and sort
-python scripts/format_bibtex.py references.bib \
-  --deduplicate \
-  --sort year \
-  --descending \
-  --output clean_refs.bib
-```
-
-## Summary
-
-**Minimum Requirements**:
-1. Run `format_bibtex.py --deduplicate`
-2. Run `validate_citations.py`
-3. Fix all errors
-4. Compile successfully
-
-**Recommended**:
-1. Format, deduplicate, and sort
-2. Validate with `--check-dois`
-3. Fix all errors and warnings
-4. Manually verify top citations
-5. Re-validate after fixes
-
-**Best Practice**:
-1. Validate throughout research process
-2. Use automated tools consistently
-3. Keep bibliography clean and organized
-4. Document any special cases
-5. Final validation 1-3 days before submission
-
-**Remember**: Citation errors reflect poorly on your scholarship. Taking time to ensure accuracy is worthwhile!
-
+- This checklist is specific to hardware and electronics engineering
+- Adapt as needed for your specific design domain
+- Maintain checklist as standards and requirements evolve
+- Document any deviations from checklist in design review notes

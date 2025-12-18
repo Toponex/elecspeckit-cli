@@ -21,7 +21,7 @@ ElecSpeckit Solutions:
 - ✅ **AI-Assisted Requirement Clarification**: `/elecspeckit.clarify` auto-discovers spec ambiguities with multiple-choice Q&A
 - ✅ **Structured Architecture Decisions**: `/elecspeckit.plan` guides Phase 0 research (topology selection, component selection) with traceable rationale
 - ✅ **Auto-Generated Role Views**: One `tasks.md` auto-generates 7 role-specific views (HW/BOM/Test/FA/PM/Datasheet/KB) with zero sync latency
-- ✅ **Claude Skills Integration**: Claude Code platform supports 23+ specialized Skills for component search, standards query, and design validation (Qwen platform has limited skill support)
+- ✅ **Claude Skills Integration**: Claude Code platform supports 15 specialized Skills for component search, standards query, and design validation (Qwen platform has limited skill support)
 - ✅ **Document Consistency Check**: `/elecspeckit.analyze` auto-detects inconsistencies between spec/plan/tasks, verifying requirement coverage, constitution alignment, and terminology consistency
 
 ## ⚠️ Important Notice
@@ -51,7 +51,7 @@ Each feature (e.g., "AC-DC Power Module", "CAN Communication Interface") corresp
 
 ### 3. Claude Skills (Claude Code Only)
 
-Claude Code platform provides 23+ specialized Skills (stored in `.claude/skills/`):
+Claude Code platform provides 15 specialized Skills (stored in `.claude/skills/`):
 
 - **Component Search**: Query Mouser, Digikey, LCSC, ICkey for component availability and pricing
 - **Standards Query**: Access local IPC/ISO standards and reference designs
@@ -105,7 +105,7 @@ elecspeckit init
 
 Interactive platform selection:
 
-- **Claude Code (recommended)** - Full Skills support with 23+ specialized tools
+- **Claude Code (recommended)** - Full Skills support with 15 specialized tools
 - **Qwen Code** - Basic functionality, limited Skills support
 
 Non-interactive initialization (for CI/CD):

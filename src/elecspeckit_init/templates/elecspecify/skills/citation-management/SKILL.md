@@ -1,377 +1,391 @@
 ---
 name: citation-management
-description: Comprehensive citation management for academic research. Search Google Scholar and PubMed for papers, extract accurate metadata, validate citations, and generate properly formatted BibTeX entries. This skill should be used when you need to find papers, verify citation information, convert DOIs to BibTeX, or ensure reference accuracy in scientific writing.
+description: Comprehensive citation management for hardware development and electronics engineering. Search IEEE Xplore, standards databases, and vendor documentation for technical documents, extract accurate metadata, validate citations, and generate properly formatted BibTeX entries. Use this skill when you need to find technical documents, verify citation information, convert document numbers to BibTeX, or ensure reference accuracy in technical design documentation.
+version: "1.0.0"
 ---
-
-# Citation Management
+# Citation Management Skill
 
 ## Overview
 
-Manage citations systematically throughout the research and writing process. This skill provides tools and strategies for searching academic databases (Google Scholar, PubMed), extracting accurate metadata from multiple sources (CrossRef, PubMed, arXiv), validating citation information, and generating properly formatted BibTeX entries.
+Manage technical citations systematically throughout the hardware design and development process. This skill provides tools and strategies for searching technical databases (IEEE Xplore, standards libraries, vendor documentation), extracting accurate metadata from multiple sources (IEEE, vendor websites, standards organizations), validating citation information, and generating properly formatted BibTeX entries.
 
-Critical for maintaining citation accuracy, avoiding reference errors, and ensuring reproducible research. Integrates seamlessly with the literature-review skill for comprehensive research workflows.
+Critical for maintaining technical documentation accuracy, avoiding design reference errors, and ensuring project traceability. Integrates seamlessly with hardware design documentation and project reports.
 
 ## When to Use This Skill
 
 Use this skill when:
-- Searching for specific papers on Google Scholar or PubMed
-- Converting DOIs, PMIDs, or arXiv IDs to properly formatted BibTeX
-- Extracting complete metadata for citations (authors, title, journal, year, etc.)
-- Validating existing citations for accuracy
-- Cleaning and formatting BibTeX files
-- Finding highly cited papers in a specific field
-- Verifying that citation information matches the actual publication
-- Building a bibliography for a manuscript or thesis
-- Checking for duplicate citations
-- Ensuring consistent citation formatting
+
+- Searching for specific technical documents on IEEE Xplore or standards databases
+- Converting standard numbers, vendor document IDs, or patent numbers to properly formatted BibTeX
+- Extracting complete metadata for technical documents (authors, title, standard number, version, date, etc.)
+- Validating existing technical citations for accuracy
+- Cleaning and formatting BibTeX files for technical documentation
+- Finding key reference documents in specific technology areas
+- Verifying that citation information matches the actual technical document
+- Building a bibliography for design reports or project documentation
+- Checking for duplicate technical citations
+- Ensuring consistent technical document citation formatting
 
 ## Core Workflow
 
-Citation management follows a systematic process:
+### Phase 1: Technical Document Discovery and Search
 
-### Phase 1: Paper Discovery and Search
+**Goal**: Find relevant documents using technical database search engines.
 
-**Goal**: Find relevant papers using academic search engines.
+#### IEEE Xplore Search
 
-#### Google Scholar Search
-
-Google Scholar provides the most comprehensive coverage across disciplines.
+IEEE Xplore provides technical literature in electrical engineering and computer science.
 
 **Basic Search**:
+
 ```bash
-# Search for papers on a topic
-python scripts/search_google_scholar.py "CRISPR gene editing" \
+# Search for papers on a specific technical topic
+python scripts/search_ieee_xplore.py "PCB design signal integrity" \
   --limit 50 \
   --output results.json
 
 # Search with year filter
-python scripts/search_google_scholar.py "machine learning protein folding" \
+python scripts/search_ieee_xplore.py "embedded system security" \
   --year-start 2020 \
   --year-end 2024 \
   --limit 100 \
-  --output ml_proteins.json
+  --output embedded_security.json
 ```
 
-**Advanced Search Strategies** (see `references/google_scholar_search.md`):
-- Use quotation marks for exact phrases: `"deep learning"`
-- Search by author: `author:LeCun`
-- Search in title: `intitle:"neural networks"`
-- Exclude terms: `machine learning -survey`
-- Find highly cited papers using sort options
-- Filter by date ranges to get recent work
+**Advanced Search Strategies**:
+
+- Use quotation marks for exact phrases: `"power management"`
+- Search by author: `author:Smith`
+- Search in title: `intitle:"FPGA design"`
+- Exclude terms: `circuit design -simulation`
+- Use sort options to find highly cited technical documents
+- Filter by date ranges to get recent standards
 
 **Best Practices**:
-- Use specific, targeted search terms
-- Include key technical terms and acronyms
-- Filter by recent years for fast-moving fields
-- Check "Cited by" to find seminal papers
+
+- Use specific, targeted technical terms
+- Include key acronyms and standard numbers
+- Filter by recent years for fast-evolving technology areas
+- Check "Cited by" to find key technical documents
 - Export top results for further analysis
 
-#### PubMed Search
-
-PubMed specializes in biomedical and life sciences literature (35+ million citations).
+#### Standards Database Search
 
 **Basic Search**:
-```bash
-# Search PubMed
-python scripts/search_pubmed.py "Alzheimer's disease treatment" \
-  --limit 100 \
-  --output alzheimers.json
 
-# Search with MeSH terms and filters
-python scripts/search_pubmed.py \
-  --query '"Alzheimer Disease"[MeSH] AND "Drug Therapy"[MeSH]' \
-  --date-start 2020 \
-  --date-end 2024 \
-  --publication-types "Clinical Trial,Review" \
-  --output alzheimers_trials.json
+```bash
+# Search for technical standards
+python scripts/search_standards.py "IEEE 802.11" \
+  --limit 100 \
+  --output wifi_standards.json
+
+# Search with category filters
+python scripts/search_standards.py \
+  --query '"safety" AND "power supply"' \
+  --categories "IEC,UL" \
+  --output safety_standards.json
 ```
 
-**Advanced PubMed Queries** (see `references/pubmed_search.md`):
-- Use MeSH terms: `"Diabetes Mellitus"[MeSH]`
-- Field tags: `"cancer"[Title]`, `"Smith J"[Author]`
+**Advanced Queries**:
+
+- Use standard numbers: `"IPC-2221"`
+- Category tags: `"PCB"[Category]`, `"safety"[Category]`
 - Boolean operators: `AND`, `OR`, `NOT`
-- Date filters: `2020:2024[Publication Date]`
-- Publication types: `"Review"[Publication Type]`
-- Combine with E-utilities API for automation
+- Version filters: `revision:2020:2024`
+- Standard types: `"Standard"[Document Type]`
+- Combine with standards organization APIs for automation
 
 **Best Practices**:
-- Use MeSH Browser to find correct controlled vocabulary
-- Construct complex queries in PubMed Advanced Search Builder first
-- Include multiple synonyms with OR
-- Retrieve PMIDs for easy metadata extraction
+
+- Use official terminology from standards organizations
+- Include multiple related standards when building complex queries
+- Retrieve standard numbers for easy metadata extraction
 - Export to JSON or directly to BibTeX
+
+#### Google Scholar Search
+
+Google Scholar provides comprehensive academic literature across all disciplines, including hardware engineering research.
+
+**Basic Search**:
+
+```bash
+# Search for academic papers on hardware topics
+python scripts/search_google_scholar.py "antenna design 5G" \
+  --limit 50 \
+  --output antenna_papers.json
+
+# Search with year filter
+python scripts/search_google_scholar.py "power electronics GaN" \
+  --year-start 2020 \
+  --limit 100 \
+  --output gan_papers.json
+```
+
+**Advanced Search Strategies**:
+
+- Use quotation marks for exact technical phrases: `"signal integrity"`
+- Search by author: `author:"Smith J"`
+- Search in title: `intitle:"FPGA implementation"`
+- Exclude terms: `antenna -simulation`
+- Use site-specific search: `site:ieee.org "power converter"`
+- Combine multiple technical terms for precision
+
+**Best Practices**:
+
+- Combine with IEEE Xplore for comprehensive technical literature coverage
+- Use for finding interdisciplinary research (hardware + software, hardware + materials science)
+- Good for finding application-oriented papers and design methodologies
+- Check citation counts to identify influential papers
+- Use for finding review papers and survey articles
+- Export results and cross-reference with standards databases
+
+**When to Use Google Scholar**:
+
+- Broad literature survey across multiple technical domains
+- Finding papers not indexed in IEEE Xplore (e.g., materials science, physics)
+- Searching for specific author's work across multiple venues
+- Finding newer preprints and conference papers
+- Cross-disciplinary hardware research (robotics, biomedical devices, etc.)
 
 ### Phase 2: Metadata Extraction
 
-**Goal**: Convert paper identifiers (DOI, PMID, arXiv ID) to complete, accurate metadata.
+**Goal**: Convert document identifiers (standard numbers, vendor doc IDs, patent numbers) to complete, accurate metadata.
 
-#### Quick DOI to BibTeX Conversion
+#### Quick Document Number to BibTeX Conversion
 
-For single DOIs, use the quick conversion tool:
+For single document numbers, use the quick conversion tool:
 
 ```bash
-# Convert single DOI
-python scripts/doi_to_bibtex.py 10.1038/s41586-021-03819-2
+# Convert single standard number
+python scripts/docnum_to_bibtex.py "IEEE 802.11-2020"
 
-# Convert multiple DOIs from a file
-python scripts/doi_to_bibtex.py --input dois.txt --output references.bib
+# Convert multiple document numbers from file
+python scripts/docnum_to_bibtex.py --input doc_nums.txt --output references.bib
 
 # Different output formats
-python scripts/doi_to_bibtex.py 10.1038/nature12345 --format json
+python scripts/docnum_to_bibtex.py "IPC-2221B" --format json
 ```
 
 #### Comprehensive Metadata Extraction
 
-For DOIs, PMIDs, arXiv IDs, or URLs:
+For standard numbers, vendor document IDs, patent numbers, or technical document URLs:
 
 ```bash
-# Extract from DOI
-python scripts/extract_metadata.py --doi 10.1038/s41586-021-03819-2
+# Extract from standard number
+python scripts/extract_metadata.py --standard "IEC 61010-1"
 
-# Extract from PMID
-python scripts/extract_metadata.py --pmid 34265844
+# Extract from vendor document ID
+python scripts/extract_metadata.py --vendor-doc "TI-SLUU551"
 
-# Extract from arXiv ID
-python scripts/extract_metadata.py --arxiv 2103.14030
+# Extract from patent number
+python scripts/extract_metadata.py --patent "US10245678B2"
 
 # Extract from URL
-python scripts/extract_metadata.py --url "https://www.nature.com/articles/s41586-021-03819-2"
+python scripts/extract_metadata.py --url "https://standards.ieee.org/standard/802_11-2020.html"
 
-# Batch extraction from file (mixed identifiers)
-python scripts/extract_metadata.py --input identifiers.txt --output citations.bib
+# Batch extraction (from file, mixed identifiers)
+python scripts/extract_metadata.py --input tech_doc_ids.txt --output citations.bib
 ```
 
-**Metadata Sources** (see `references/metadata_extraction.md`):
+**Metadata Sources**:
 
-1. **CrossRef API**: Primary source for DOIs
-   - Comprehensive metadata for journal articles
-   - Publisher-provided information
-   - Includes authors, title, journal, volume, pages, dates
-   - Free, no API key required
+1. **Standards Organization APIs**: Primary source for technical standards
 
-2. **PubMed E-utilities**: Biomedical literature
-   - Official NCBI metadata
-   - Includes MeSH terms, abstracts
-   - PMID and PMCID identifiers
-   - Free, API key recommended for high volume
+   - Comprehensive metadata for standard documents
+   - Official information from publishing organizations
+   - Includes standard number, title, version, publication date, status
+   - May require API keys for access
+2. **Vendor Documentation Libraries**: Chip and component technical docs
 
-3. **arXiv API**: Preprints in physics, math, CS, q-bio
-   - Complete metadata for preprints
-   - Version tracking
-   - Author affiliations
-   - Free, open access
+   - Vendor-provided datasheets and application notes
+   - Includes device numbers, versions, revision history
+   - Parameter tables and datasheet information
+3. **Patent Database APIs**: Technical patent documents
 
-4. **DataCite API**: Research datasets, software, other resources
-   - Metadata for non-traditional scholarly outputs
-   - DOIs for datasets and code
-   - Free access
+   - Official patent metadata
+   - Includes patent number, inventors, filing dates
+   - May require API keys for access
+4. **Technical Literature Databases**: Academic and technical literature
 
-**What Gets Extracted**:
-- **Required fields**: author, title, year
-- **Journal articles**: journal, volume, number, pages, DOI
-- **Books**: publisher, ISBN, edition
-- **Conference papers**: booktitle, conference location, pages
-- **Preprints**: repository (arXiv, bioRxiv), preprint ID
-- **Additional**: abstract, keywords, URL
+   - Metadata for conference papers and journal articles
+   - Author affiliations, conference information
+   - Requires subscriptions or API keys
+
+**Extracted Content**:
+
+- **Required fields**: title, standard/document number, version, publication date
+- **Technical standards**: publishing organization, standard number, revision, effective date
+- **Vendor documents**: vendor name, document type, device number, revision
+- **Patent documents**: patent number, inventors, filing date, publication date
+- **Technical papers**: authors, conference/journal, volume/issue, pages
+- **Additional info**: abstract, keywords, technical domain, citation URL
 
 ### Phase 3: BibTeX Formatting
 
-**Goal**: Generate clean, properly formatted BibTeX entries.
+**Goal**: Generate clean, properly formatted technical document citation entries.
 
-#### Understanding BibTeX Entry Types
+#### Understanding BibTeX Entry Types for Technical Documents
 
-See `references/bibtex_formatting.md` for complete guide.
+**Technical Document-Specific Entry Types**:
 
-**Common Entry Types**:
-- `@article`: Journal articles (most common)
-- `@book`: Books
-- `@inproceedings`: Conference papers
-- `@incollection`: Book chapters
-- `@phdthesis`: Dissertations
-- `@misc`: Preprints, software, datasets
+- `@standard`: Technical standards and specifications
+- `@manual`: Technical manuals and guides
+- `@patent`: Patent documents
+- `@techreport`: Technical reports and white papers
+- `@misc`: Vendor datasheets, application notes
 
 **Required Fields by Type**:
 
 ```bibtex
-@article{citationkey,
-  author  = {Last1, First1 and Last2, First2},
-  title   = {Article Title},
-  journal = {Journal Name},
-  year    = {2024},
-  volume  = {10},
-  number  = {3},
-  pages   = {123--145},
-  doi     = {10.1234/example}
+@standard{ieee802.11_2020,
+  title        = {IEEE Standard for Information Technology--Telecommunications and Information Exchange between Systems - Local and Metropolitan Area Networks--Specific Requirements - Part 11: Wireless LAN Medium Access Control (MAC) and Physical Layer (PHY) Specifications},
+  number       = {802.11-2020},
+  organization = {Institute of Electrical and Electronics Engineers},
+  year         = {2020},
+  month        = {feb},
+  doi          = {10.1109/IEEESTD.2021.9363693}
 }
 
-@inproceedings{citationkey,
-  author    = {Last, First},
-  title     = {Paper Title},
-  booktitle = {Conference Name},
-  year      = {2024},
-  pages     = {1--10}
+@manual{ti_ucc28740,
+  title        = {UCC28740 65-kHz, Flyback-Switch Mode Power Supply Controller},
+  number       = {SLUSCJ3},
+  organization = {Texas Instruments},
+  year         = {2019},
+  month        = {apr},
+  note         = {Rev. C}
 }
 
-@book{citationkey,
-  author    = {Last, First},
-  title     = {Book Title},
-  publisher = {Publisher Name},
-  year      = {2024}
+@patent{us10245678b2,
+  title        = {Power Management System for Integrated Circuits},
+  number       = {US10245678B2},
+  author       = {Smith, John and Lee, Robert},
+  year         = {2019},
+  month        = {mar},
+  assignee     = {Texas Instruments Incorporated}
 }
 ```
 
-#### Formatting and Cleaning
+#### Formatting and Cleanup
 
-Use the formatter to standardize BibTeX files:
+Use the formatting tool to standardize technical citation files:
 
 ```bash
 # Format and clean BibTeX file
-python scripts/format_bibtex.py references.bib \
+python scripts/format_bibtex.py tech_references.bib \
   --output formatted_references.bib
 
-# Sort entries by citation key
-python scripts/format_bibtex.py references.bib \
-  --sort key \
+# Sort entries by standard number
+python scripts/format_bibtex.py tech_references.bib \
+  --sort number \
   --output sorted_references.bib
 
-# Sort by year (newest first)
-python scripts/format_bibtex.py references.bib \
+# Sort by publication date (newest first)
+python scripts/format_bibtex.py tech_references.bib \
   --sort year \
   --descending \
   --output sorted_references.bib
 
 # Remove duplicates
-python scripts/format_bibtex.py references.bib \
+python scripts/format_bibtex.py tech_references.bib \
   --deduplicate \
   --output clean_references.bib
 
 # Validate and report issues
-python scripts/format_bibtex.py references.bib \
+python scripts/format_bibtex.py tech_references.bib \
   --validate \
   --report validation_report.txt
 ```
 
 **Formatting Operations**:
-- Standardize field order
+
+- Standardize technical document field order
 - Consistent indentation and spacing
-- Proper capitalization in titles (protected with {})
-- Standardized author name format
-- Consistent citation key format
+- Proper formatting of standard numbers
+- Standardized abbreviations for vendor names
+- Consistent document number formatting
 - Remove unnecessary fields
 - Fix common errors (missing commas, braces)
 
 ### Phase 4: Citation Validation
 
-**Goal**: Verify all citations are accurate and complete.
+**Goal**: Verify accuracy and currency of all technical citations.
 
 #### Comprehensive Validation
 
 ```bash
 # Validate BibTeX file
-python scripts/validate_citations.py references.bib
+python scripts/validate_citations.py tech_references.bib
 
-# Validate and fix common issues
-python scripts/validate_citations.py references.bib \
+# Validate and auto-fix common issues
+python scripts/validate_citations.py tech_references.bib \
   --auto-fix \
   --output validated_references.bib
 
 # Generate detailed validation report
-python scripts/validate_citations.py references.bib \
+python scripts/validate_citations.py tech_references.bib \
   --report validation_report.json \
   --verbose
 ```
 
-**Validation Checks** (see `references/citation_validation.md`):
+**Technical Document-Specific Validation Checks**:
 
-1. **DOI Verification**:
-   - DOI resolves correctly via doi.org
-   - Metadata matches between BibTeX and CrossRef
-   - No broken or invalid DOIs
+1. **Standard Version Validation**:
 
-2. **Required Fields**:
-   - All required fields present for entry type
-   - No empty or missing critical information
-   - Author names properly formatted
+   - Standard number format correctness
+   - Whether revision is the latest version
+   - Standard status is currently effective
+2. **Document Number Validation**:
 
-3. **Data Consistency**:
-   - Year is valid (4 digits, reasonable range)
-   - Volume/number are numeric
-   - Pages formatted correctly (e.g., 123--145)
-   - URLs are accessible
+   - Vendor document number format correctness
+   - Document version is current
+   - Document is still valid (not obsolete)
+3. **Patent Status Validation**:
 
-4. **Duplicate Detection**:
-   - Same DOI used multiple times
-   - Similar titles (possible duplicates)
-   - Same author/year/title combinations
+   - Patent number format correctness
+   - Patent is still in force
+   - Check for continuation patents
+4. **Currency Checks**:
 
-5. **Format Compliance**:
-   - Valid BibTeX syntax
-   - Proper bracing and quoting
-   - Citation keys are unique
-   - Special characters handled correctly
+   - Technical standard is within validity period
+   - Vendor document has newer versions available
+   - Patent has expired
+5. **Technical Parameter Consistency**:
 
-**Validation Output**:
-```json
-{
-  "total_entries": 150,
-  "valid_entries": 145,
-  "errors": [
-    {
-      "citation_key": "Smith2023",
-      "error_type": "missing_field",
-      "field": "journal",
-      "severity": "high"
-    },
-    {
-      "citation_key": "Jones2022",
-      "error_type": "invalid_doi",
-      "doi": "10.1234/broken",
-      "severity": "high"
-    }
-  ],
-  "warnings": [
-    {
-      "citation_key": "Brown2021",
-      "warning_type": "possible_duplicate",
-      "duplicate_of": "Brown2021a",
-      "severity": "medium"
-    }
-  ]
-}
-```
+   - Referenced device parameters match latest datasheets
+   - Standard requirements match cited version
+   - No contradictions in technical specifications
 
-### Phase 5: Integration with Writing Workflow
+### Phase 5: Integration with Hardware Design Workflow
 
-#### Building References for Manuscripts
+#### Building Bibliography for Design Documentation
 
-Complete workflow for creating a bibliography:
+Complete workflow for creating technical document citation lists:
 
 ```bash
-# 1. Search for papers on your topic
-python scripts/search_pubmed.py \
-  '"CRISPR-Cas Systems"[MeSH] AND "Gene Editing"[MeSH]' \
-  --date-start 2020 \
+# 1. Search for documents on your technical topic
+python scripts/search_ieee_xplore.py \
+  '"signal integrity" AND "high-speed PCB"' \
+  --year-start 2020 \
   --limit 200 \
-  --output crispr_papers.json
+  --output signal_integrity_docs.json
 
-# 2. Extract DOIs from search results and convert to BibTeX
+# 2. Extract document numbers from search results and convert to BibTeX
 python scripts/extract_metadata.py \
-  --input crispr_papers.json \
-  --output crispr_refs.bib
+  --input signal_integrity_docs.json \
+  --output signal_refs.bib
 
-# 3. Add specific papers by DOI
-python scripts/doi_to_bibtex.py 10.1038/nature12345 >> crispr_refs.bib
-python scripts/doi_to_bibtex.py 10.1126/science.abcd1234 >> crispr_refs.bib
+# 3. Add specific documents by standard number
+python scripts/docnum_to_bibtex.py "IPC-2221B" >> signal_refs.bib
+python scripts/docnum_to_bibtex.py "JESD22-A114" >> signal_refs.bib
 
-# 4. Format and clean the BibTeX file
-python scripts/format_bibtex.py crispr_refs.bib \
+# 4. Format and clean BibTeX file
+python scripts/format_bibtex.py signal_refs.bib \
   --deduplicate \
   --sort year \
   --descending \
   --output references.bib
 
-# 5. Validate all citations
+# 5. Validate all technical citations
 python scripts/validate_citations.py references.bib \
   --auto-fix \
   --report validation.json \
@@ -380,667 +394,220 @@ python scripts/validate_citations.py references.bib \
 # 6. Review validation report and fix any remaining issues
 cat validation.json
 
-# 7. Use in your LaTeX document
-# \bibliography{final_references}
-```
-
-#### Integration with Literature Review Skill
-
-This skill complements the `literature-review` skill:
-
-**Literature Review Skill** → Systematic search and synthesis
-**Citation Management Skill** → Technical citation handling
-
-**Combined Workflow**:
-1. Use `literature-review` for comprehensive multi-database search
-2. Use `citation-management` to extract and validate all citations
-3. Use `literature-review` to synthesize findings thematically
-4. Use `citation-management` to verify final bibliography accuracy
-
-```bash
-# After completing literature review
-# Verify all citations in the review document
-python scripts/validate_citations.py my_review_references.bib --report review_validation.json
-
-# Format for specific citation style if needed
-python scripts/format_bibtex.py my_review_references.bib \
-  --style nature \
-  --output formatted_refs.bib
+# 7. Use in your design documentation
+# Include in references section of project documentation
 ```
 
 ## Search Strategies
 
-### Google Scholar Best Practices
+### IEEE Xplore Best Practices
 
-**Finding Seminal Papers**:
-- Sort by citation count (most cited first)
-- Look for review articles for overview
-- Check "Cited by" for impact assessment
-- Use citation alerts for tracking new citations
+**Finding Key Technical Documents**:
 
-**Advanced Operators** (full list in `references/google_scholar_search.md`):
+- Sort by citation count to find influential technical papers
+- Look for review articles for state-of-the-art understanding
+- Check "Cited by" to assess technical impact
+- Use citation alerts to track new technical developments
+
+**Advanced Operators**:
+
 ```
-"exact phrase"           # Exact phrase matching
+"exact phrase"           # Exact phrase match
 author:lastname          # Search by author
 intitle:keyword          # Search in title only
-source:journal           # Search specific journal
--exclude                 # Exclude terms
-OR                       # Alternative terms
-2020..2024              # Year range
+conference:name          # Search specific conference
+-year:2023              # Exclude specific year
+"power" AND "management" # Combine terms
+2018..2024              # Year range
 ```
 
-**Example Searches**:
-```
-# Find recent reviews on a topic
-"CRISPR" intitle:review 2023..2024
+**Search Examples**:
 
-# Find papers by specific author on topic
-author:Church "synthetic biology"
-
-# Find highly cited foundational work
-"deep learning" 2012..2015 sort:citations
-
-# Exclude surveys and focus on methods
-"protein folding" -survey -review intitle:method
-```
-
-### PubMed Best Practices
-
-**Using MeSH Terms**:
-MeSH (Medical Subject Headings) provides controlled vocabulary for precise searching.
-
-1. **Find MeSH terms** at https://meshb.nlm.nih.gov/search
-2. **Use in queries**: `"Diabetes Mellitus, Type 2"[MeSH]`
-3. **Combine with keywords** for comprehensive coverage
-
-**Field Tags**:
-```
-[Title]              # Search in title only
-[Title/Abstract]     # Search in title or abstract
-[Author]             # Search by author name
-[Journal]            # Search specific journal
-[Publication Date]   # Date range
-[Publication Type]   # Article type
-[MeSH]              # MeSH term
-```
-
-**Building Complex Queries**:
 ```bash
-# Clinical trials on diabetes treatment published recently
-"Diabetes Mellitus, Type 2"[MeSH] AND "Drug Therapy"[MeSH] 
-AND "Clinical Trial"[Publication Type] AND 2020:2024[Publication Date]
+# Find recent technical reviews
+"5G" intitle:review 2023..2024
 
-# Reviews on CRISPR in specific journal
-"CRISPR-Cas Systems"[MeSH] AND "Nature"[Journal] AND "Review"[Publication Type]
+# Find company-specific technical patents
+assignee:"Texas Instruments" "power converter"
 
-# Specific author's recent work
-"Smith AB"[Author] AND cancer[Title/Abstract] AND 2022:2024[Publication Date]
+# Find influential foundational tech
+"CMOS" 1963..1980 sort:citations
+
+# Exclude simulation-related, focus on design methodology
+"antenna design" -simulation -modeling
 ```
-
-**E-utilities for Automation**:
-The scripts use NCBI E-utilities API for programmatic access:
-- **ESearch**: Search and retrieve PMIDs
-- **EFetch**: Retrieve full metadata
-- **ESummary**: Get summary information
-- **ELink**: Find related articles
-
-See `references/pubmed_search.md` for complete API documentation.
 
 ## Tools and Scripts
 
-### search_google_scholar.py
+### search_ieee_xplore.py
 
-Search Google Scholar and export results.
+Search IEEE Xplore and export results.
 
 **Features**:
-- Automated searching with rate limiting
+
+- Automated search with rate limiting
 - Pagination support
 - Year range filtering
 - Export to JSON or BibTeX
-- Citation count information
+- Citation counts and impact metrics
 
 **Usage**:
+
 ```bash
-# Basic search
-python scripts/search_google_scholar.py "quantum computing"
+# Basic technical search
+python scripts/search_ieee_xplore.py "quantum computing hardware"
 
 # Advanced search with filters
-python scripts/search_google_scholar.py "quantum computing" \
+python scripts/search_ieee_xplore.py "quantum computing" \
   --year-start 2020 \
   --year-end 2024 \
   --limit 100 \
   --sort-by citations \
   --output quantum_papers.json
 
-# Export directly to BibTeX
-python scripts/search_google_scholar.py "machine learning" \
+# Export to BibTeX
+python scripts/search_ieee_xplore.py "embedded security" \
   --limit 50 \
   --format bibtex \
-  --output ml_papers.bib
+  --output embedded_security.bib
 ```
 
-### search_pubmed.py
+### search_standards.py
 
-Search PubMed using E-utilities API.
+Search technical standards databases.
 
 **Features**:
-- Complex query support (MeSH, field tags, Boolean)
-- Date range filtering
-- Publication type filtering
-- Batch retrieval with metadata
+
+- Support for complex queries (standard number, category, keyword)
+- Version range filtering
+- Standard status filtering
+- Batch metadata retrieval
 - Export to JSON or BibTeX
 
 **Usage**:
-```bash
-# Simple keyword search
-python scripts/search_pubmed.py "CRISPR gene editing"
 
-# Complex query with filters
-python scripts/search_pubmed.py \
-  --query '"CRISPR-Cas Systems"[MeSH] AND "therapeutic"[Title/Abstract]' \
-  --date-start 2020-01-01 \
-  --date-end 2024-12-31 \
-  --publication-types "Clinical Trial,Review" \
+```bash
+# Simple standard search
+python scripts/search_standards.py "IEC 62368"
+
+# Complex query
+python scripts/search_standards.py \
+  --query '"safety" AND "audio equipment"' \
+  --organizations "IEC,UL" \
+  --status "current" \
   --limit 200 \
-  --output crispr_therapeutic.json
+  --output audio_safety_standards.json
+```
+
+### search_google_scholar.py
+
+Search Google Scholar for academic literature across all disciplines.
+
+**Features**:
+
+- Comprehensive academic literature coverage
+- Cross-disciplinary search capability
+- Citation count tracking
+- Year range filtering
+- Export to JSON or BibTeX
+- No API key required (web scraping with rate limiting)
+
+**Usage**:
+
+```bash
+# Basic academic search
+python scripts/search_google_scholar.py "GaN power amplifier"
+
+# Advanced search with filters
+python scripts/search_google_scholar.py "machine learning circuit design" \
+  --year-start 2020 \
+  --year-end 2024 \
+  --limit 50 \
+  --output ml_circuits.json
 
 # Export to BibTeX
-python scripts/search_pubmed.py "Alzheimer's disease" \
-  --limit 100 \
+python scripts/search_google_scholar.py "wireless power transfer" \
+  --limit 30 \
   --format bibtex \
-  --output alzheimers.bib
+  --output wpt_papers.bib
 ```
+
+**Best Practices**:
+
+- Use specific technical terms for better results
+- Combine with IEEE Xplore for comprehensive coverage
+- Respect rate limits (built-in delays between requests)
+- Good for interdisciplinary hardware research
+- Use for finding papers across multiple venues
 
 ### extract_metadata.py
 
-Extract complete metadata from paper identifiers.
+Extract complete metadata from technical document identifiers.
 
 **Features**:
-- Supports DOI, PMID, arXiv ID, URL
-- Queries CrossRef, PubMed, arXiv APIs
-- Handles multiple identifier types
+
+- Support for standard numbers, vendor doc IDs, patent numbers, URLs
+- Query standards organization, vendor, patent database APIs
+- Handle multiple identifier types
 - Batch processing
 - Multiple output formats
 
 **Usage**:
+
 ```bash
-# Single DOI
-python scripts/extract_metadata.py --doi 10.1038/s41586-021-03819-2
+# Standard number extraction
+python scripts/extract_metadata.py --standard "IEC 61010-1:2020"
 
-# Single PMID
-python scripts/extract_metadata.py --pmid 34265844
+# Vendor document ID extraction
+python scripts/extract_metadata.py --vendor-doc "TI-SLUU551C"
 
-# Single arXiv ID
-python scripts/extract_metadata.py --arxiv 2103.14030
+# Patent number extraction
+python scripts/extract_metadata.py --patent "US10245678B2"
 
-# From URL
-python scripts/extract_metadata.py \
-  --url "https://www.nature.com/articles/s41586-021-03819-2"
+# Extract from URL
+python scripts/extract_metadata.py --url "https://ieeexplore.ieee.org/document/1234567"
 
-# Batch processing (file with one identifier per line)
-python scripts/extract_metadata.py \
-  --input paper_ids.txt \
-  --output references.bib
-
-# Different output formats
-python scripts/extract_metadata.py \
-  --doi 10.1038/nature12345 \
-  --format json  # or bibtex, yaml
-```
-
-### validate_citations.py
-
-Validate BibTeX entries for accuracy and completeness.
-
-**Features**:
-- DOI verification via doi.org and CrossRef
-- Required field checking
-- Duplicate detection
-- Format validation
-- Auto-fix common issues
-- Detailed reporting
-
-**Usage**:
-```bash
-# Basic validation
-python scripts/validate_citations.py references.bib
-
-# With auto-fix
-python scripts/validate_citations.py references.bib \
-  --auto-fix \
-  --output fixed_references.bib
-
-# Detailed validation report
-python scripts/validate_citations.py references.bib \
-  --report validation_report.json \
-  --verbose
-
-# Only check DOIs
-python scripts/validate_citations.py references.bib \
-  --check-dois-only
-```
-
-### format_bibtex.py
-
-Format and clean BibTeX files.
-
-**Features**:
-- Standardize formatting
-- Sort entries (by key, year, author)
-- Remove duplicates
-- Validate syntax
-- Fix common errors
-- Enforce citation key conventions
-
-**Usage**:
-```bash
-# Basic formatting
-python scripts/format_bibtex.py references.bib
-
-# Sort by year (newest first)
-python scripts/format_bibtex.py references.bib \
-  --sort year \
-  --descending \
-  --output sorted_refs.bib
-
-# Remove duplicates
-python scripts/format_bibtex.py references.bib \
-  --deduplicate \
-  --output clean_refs.bib
-
-# Complete cleanup
-python scripts/format_bibtex.py references.bib \
-  --deduplicate \
-  --sort year \
-  --validate \
-  --auto-fix \
-  --output final_refs.bib
-```
-
-### doi_to_bibtex.py
-
-Quick DOI to BibTeX conversion.
-
-**Features**:
-- Fast single DOI conversion
-- Batch processing
-- Multiple output formats
-- Clipboard support
-
-**Usage**:
-```bash
-# Single DOI
-python scripts/doi_to_bibtex.py 10.1038/s41586-021-03819-2
-
-# Multiple DOIs
-python scripts/doi_to_bibtex.py \
-  10.1038/nature12345 \
-  10.1126/science.abc1234 \
-  10.1016/j.cell.2023.01.001
-
-# From file (one DOI per line)
-python scripts/doi_to_bibtex.py --input dois.txt --output references.bib
-
-# Copy to clipboard
-python scripts/doi_to_bibtex.py 10.1038/nature12345 --clipboard
+# Batch processing
+python scripts/extract_metadata.py --input tech_docs.txt --output references.bib
 ```
 
 ## Best Practices
 
-### Search Strategy
+### Technical Citation Strategy
 
-1. **Start broad, then narrow**:
-   - Begin with general terms to understand the field
-   - Refine with specific keywords and filters
-   - Use synonyms and related terms
+1. **Prioritize Official Sources**: Always use latest documents from standards organizations or vendor official websites
+2. **Explicit Version Information**: Annotate specific version and revision date of cited documents
+3. **Parameter Consistency**: Critical device parameters must exactly match latest datasheets
+4. **Standard Currency**: Use current effective standard versions, avoid referencing obsolete standards
+5. **Vendor Document Tracking**: Establish update tracking mechanism for vendor documents
 
-2. **Use multiple sources**:
-   - Google Scholar for comprehensive coverage
-   - PubMed for biomedical focus
-   - arXiv for preprints
-   - Combine results for completeness
+### Design Documentation Management
 
-3. **Leverage citations**:
-   - Check "Cited by" for seminal papers
-   - Review references from key papers
-   - Use citation networks to discover related work
+- **Version Control Integration**: Integrate technical citations with design file version control system
+- **Document Status Tracking**: Establish status tracking and update reminders for technical documents
+- **Cross-Validation Mechanism**: Important technical parameters require cross-validation from multiple sources
+- **Archive Management**: Establish complete archives for historical versions of design documents and technical citations
 
-4. **Document your searches**:
-   - Save search queries and dates
-   - Record number of results
-   - Note any filters or restrictions applied
+## Troubleshooting
 
-### Metadata Extraction
+### Common Issues
 
-1. **Always use DOIs when available**:
-   - Most reliable identifier
-   - Permanent link to the publication
-   - Best metadata source via CrossRef
+1. **API Rate Limiting**: Implement exponential backoff and respect rate limits
+2. **Missing Metadata**: Verify document identifiers and try alternative sources
+3. **Version Mismatches**: Always specify exact version numbers in citations
+4. **Obsolete Standards**: Check standard status before citation
+5. **Vendor Document Updates**: Regularly check for newer revisions
 
-2. **Verify extracted metadata**:
-   - Check author names are correct
-   - Verify journal/conference names
-   - Confirm publication year
-   - Validate page numbers and volume
+### Getting Help
 
-3. **Handle edge cases**:
-   - Preprints: Include repository and ID
-   - Preprints later published: Use published version
-   - Conference papers: Include conference name and location
-   - Book chapters: Include book title and editors
+- Check `references/` directory for detailed documentation
+- Review script help: `python scripts/[script_name].py --help`
+- Consult standards organization websites for official citation formats
+- Use vendor technical support for document identification questions
 
-4. **Maintain consistency**:
-   - Use consistent author name format
-   - Standardize journal abbreviations
-   - Use same DOI format (URL preferred)
+## References
 
-### BibTeX Quality
-
-1. **Follow conventions**:
-   - Use meaningful citation keys (FirstAuthor2024keyword)
-   - Protect capitalization in titles with {}
-   - Use -- for page ranges (not single dash)
-   - Include DOI field for all modern publications
-
-2. **Keep it clean**:
-   - Remove unnecessary fields
-   - No redundant information
-   - Consistent formatting
-   - Validate syntax regularly
-
-3. **Organize systematically**:
-   - Sort by year or topic
-   - Group related papers
-   - Use separate files for different projects
-   - Merge carefully to avoid duplicates
-
-### Validation
-
-1. **Validate early and often**:
-   - Check citations when adding them
-   - Validate complete bibliography before submission
-   - Re-validate after any manual edits
-
-2. **Fix issues promptly**:
-   - Broken DOIs: Find correct identifier
-   - Missing fields: Extract from original source
-   - Duplicates: Choose best version, remove others
-   - Format errors: Use auto-fix when safe
-
-3. **Manual review for critical citations**:
-   - Verify key papers cited correctly
-   - Check author names match publication
-   - Confirm page numbers and volume
-   - Ensure URLs are current
-
-## Common Pitfalls to Avoid
-
-1. **Single source bias**: Only using Google Scholar or PubMed
-   - **Solution**: Search multiple databases for comprehensive coverage
-
-2. **Accepting metadata blindly**: Not verifying extracted information
-   - **Solution**: Spot-check extracted metadata against original sources
-
-3. **Ignoring DOI errors**: Broken or incorrect DOIs in bibliography
-   - **Solution**: Run validation before final submission
-
-4. **Inconsistent formatting**: Mixed citation key styles, formatting
-   - **Solution**: Use format_bibtex.py to standardize
-
-5. **Duplicate entries**: Same paper cited multiple times with different keys
-   - **Solution**: Use duplicate detection in validation
-
-6. **Missing required fields**: Incomplete BibTeX entries
-   - **Solution**: Validate and ensure all required fields present
-
-7. **Outdated preprints**: Citing preprint when published version exists
-   - **Solution**: Check if preprints have been published, update to journal version
-
-8. **Special character issues**: Broken LaTeX compilation due to characters
-   - **Solution**: Use proper escaping or Unicode in BibTeX
-
-9. **No validation before submission**: Submitting with citation errors
-   - **Solution**: Always run validation as final check
-
-10. **Manual BibTeX entry**: Typing entries by hand
-    - **Solution**: Always extract from metadata sources using scripts
-
-## Example Workflows
-
-### Example 1: Building a Bibliography for a Paper
-
-```bash
-# Step 1: Find key papers on your topic
-python scripts/search_google_scholar.py "transformer neural networks" \
-  --year-start 2017 \
-  --limit 50 \
-  --output transformers_gs.json
-
-python scripts/search_pubmed.py "deep learning medical imaging" \
-  --date-start 2020 \
-  --limit 50 \
-  --output medical_dl_pm.json
-
-# Step 2: Extract metadata from search results
-python scripts/extract_metadata.py \
-  --input transformers_gs.json \
-  --output transformers.bib
-
-python scripts/extract_metadata.py \
-  --input medical_dl_pm.json \
-  --output medical.bib
-
-# Step 3: Add specific papers you already know
-python scripts/doi_to_bibtex.py 10.1038/s41586-021-03819-2 >> specific.bib
-python scripts/doi_to_bibtex.py 10.1126/science.aam9317 >> specific.bib
-
-# Step 4: Combine all BibTeX files
-cat transformers.bib medical.bib specific.bib > combined.bib
-
-# Step 5: Format and deduplicate
-python scripts/format_bibtex.py combined.bib \
-  --deduplicate \
-  --sort year \
-  --descending \
-  --output formatted.bib
-
-# Step 6: Validate
-python scripts/validate_citations.py formatted.bib \
-  --auto-fix \
-  --report validation.json \
-  --output final_references.bib
-
-# Step 7: Review any issues
-cat validation.json | grep -A 3 '"errors"'
-
-# Step 8: Use in LaTeX
-# \bibliography{final_references}
-```
-
-### Example 2: Converting a List of DOIs
-
-```bash
-# You have a text file with DOIs (one per line)
-# dois.txt contains:
-# 10.1038/s41586-021-03819-2
-# 10.1126/science.aam9317
-# 10.1016/j.cell.2023.01.001
-
-# Convert all to BibTeX
-python scripts/doi_to_bibtex.py --input dois.txt --output references.bib
-
-# Validate the result
-python scripts/validate_citations.py references.bib --verbose
-```
-
-### Example 3: Cleaning an Existing BibTeX File
-
-```bash
-# You have a messy BibTeX file from various sources
-# Clean it up systematically
-
-# Step 1: Format and standardize
-python scripts/format_bibtex.py messy_references.bib \
-  --output step1_formatted.bib
-
-# Step 2: Remove duplicates
-python scripts/format_bibtex.py step1_formatted.bib \
-  --deduplicate \
-  --output step2_deduplicated.bib
-
-# Step 3: Validate and auto-fix
-python scripts/validate_citations.py step2_deduplicated.bib \
-  --auto-fix \
-  --output step3_validated.bib
-
-# Step 4: Sort by year
-python scripts/format_bibtex.py step3_validated.bib \
-  --sort year \
-  --descending \
-  --output clean_references.bib
-
-# Step 5: Final validation report
-python scripts/validate_citations.py clean_references.bib \
-  --report final_validation.json \
-  --verbose
-
-# Review report
-cat final_validation.json
-```
-
-### Example 4: Finding and Citing Seminal Papers
-
-```bash
-# Find highly cited papers on a topic
-python scripts/search_google_scholar.py "AlphaFold protein structure" \
-  --year-start 2020 \
-  --year-end 2024 \
-  --sort-by citations \
-  --limit 20 \
-  --output alphafold_seminal.json
-
-# Extract the top 10 by citation count
-# (script will have included citation counts in JSON)
-
-# Convert to BibTeX
-python scripts/extract_metadata.py \
-  --input alphafold_seminal.json \
-  --output alphafold_refs.bib
-
-# The BibTeX file now contains the most influential papers
-```
-
-## Integration with Other Skills
-
-### Literature Review Skill
-
-**Citation Management** provides the technical infrastructure for **Literature Review**:
-
-- **Literature Review**: Multi-database systematic search and synthesis
-- **Citation Management**: Metadata extraction and validation
-
-**Combined workflow**:
-1. Use literature-review for systematic search methodology
-2. Use citation-management to extract and validate citations
-3. Use literature-review to synthesize findings
-4. Use citation-management to ensure bibliography accuracy
-
-### Scientific Writing Skill
-
-**Citation Management** ensures accurate references for **Scientific Writing**:
-
-- Export validated BibTeX for use in LaTeX manuscripts
-- Verify citations match publication standards
-- Format references according to journal requirements
-
-### Venue Templates Skill
-
-**Citation Management** works with **Venue Templates** for submission-ready manuscripts:
-
-- Different venues require different citation styles
-- Generate properly formatted references
-- Validate citations meet venue requirements
-
-## Resources
-
-### Bundled Resources
-
-**References** (in `references/`):
-- `google_scholar_search.md`: Complete Google Scholar search guide
-- `pubmed_search.md`: PubMed and E-utilities API documentation
-- `metadata_extraction.md`: Metadata sources and field requirements
-- `citation_validation.md`: Validation criteria and quality checks
-- `bibtex_formatting.md`: BibTeX entry types and formatting rules
-
-**Scripts** (in `scripts/`):
-- `search_google_scholar.py`: Google Scholar search automation
-- `search_pubmed.py`: PubMed E-utilities API client
-- `extract_metadata.py`: Universal metadata extractor
-- `validate_citations.py`: Citation validation and verification
-- `format_bibtex.py`: BibTeX formatter and cleaner
-- `doi_to_bibtex.py`: Quick DOI to BibTeX converter
-
-**Assets** (in `assets/`):
-- `bibtex_template.bib`: Example BibTeX entries for all types
-- `citation_checklist.md`: Quality assurance checklist
-
-### External Resources
-
-**Search Engines**:
-- Google Scholar: https://scholar.google.com/
-- PubMed: https://pubmed.ncbi.nlm.nih.gov/
-- PubMed Advanced Search: https://pubmed.ncbi.nlm.nih.gov/advanced/
-
-**Metadata APIs**:
-- CrossRef API: https://api.crossref.org/
-- PubMed E-utilities: https://www.ncbi.nlm.nih.gov/books/NBK25501/
-- arXiv API: https://arxiv.org/help/api/
-- DataCite API: https://api.datacite.org/
-
-**Tools and Validators**:
-- MeSH Browser: https://meshb.nlm.nih.gov/search
-- DOI Resolver: https://doi.org/
-- BibTeX Format: http://www.bibtex.org/Format/
-
-**Citation Styles**:
-- BibTeX documentation: http://www.bibtex.org/
-- LaTeX bibliography management: https://www.overleaf.com/learn/latex/Bibliography_management
-
-## Dependencies
-
-### Required Python Packages
-
-```bash
-# Core dependencies
-pip install requests  # HTTP requests for APIs
-pip install bibtexparser  # BibTeX parsing and formatting
-pip install biopython  # PubMed E-utilities access
-
-# Optional (for Google Scholar)
-pip install scholarly  # Google Scholar API wrapper
-# or
-pip install selenium  # For more robust Scholar scraping
-```
-
-### Optional Tools
-
-```bash
-# For advanced validation
-pip install crossref-commons  # Enhanced CrossRef API access
-pip install pylatexenc  # LaTeX special character handling
-```
-
-## Summary
-
-The citation-management skill provides:
-
-1. **Comprehensive search capabilities** for Google Scholar and PubMed
-2. **Automated metadata extraction** from DOI, PMID, arXiv ID, URLs
-3. **Citation validation** with DOI verification and completeness checking
-4. **BibTeX formatting** with standardization and cleaning tools
-5. **Quality assurance** through validation and reporting
-6. **Integration** with scientific writing workflow
-7. **Reproducibility** through documented search and extraction methods
-
-Use this skill to maintain accurate, complete citations throughout your research and ensure publication-ready bibliographies.
-
+- IEEE Citation Guidelines: https://journals.ieeeauthorcenter.ieee.org/
+- IEC Standards Portal: https://www.iec.ch/
+- IPC Standards: https://www.ipc.org/
+- BibTeX Format Documentation: http://www.bibtex.org/Format/

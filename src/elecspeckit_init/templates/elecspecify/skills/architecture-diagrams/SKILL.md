@@ -1,6 +1,7 @@
 ---
 name: architecture-diagrams
 description: Create system architecture diagrams using Mermaid, PlantUML, C4 model, flowcharts, and sequence diagrams. Use when documenting architecture, system design, data flows, or technical workflows.
+version: "1.0.0"
 ---
 # Architecture Diagrams Skill
 

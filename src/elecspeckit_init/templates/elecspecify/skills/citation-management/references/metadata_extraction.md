@@ -868,3 +868,605 @@ Metadata extraction workflow:
 
 **Always validate** extracted metadata before final submission!
 
+---
+
+## Hardware and Electronics Engineering Documents
+
+This section covers metadata extraction for technical standards, vendor datasheets, and patents commonly used in hardware development and electronics engineering.
+
+### Technical Document Identifiers
+
+### Standard Numbers
+
+**IEEE Standards**:
+```
+Pattern: IEEE [Std] NUMBER[.SUBNUM]-YEAR
+Examples:
+- IEEE 802.11-2020
+- IEEE Std 1547-2018
+- IEEE 519-2014
+```
+
+**IEC Standards**:
+```
+Pattern: IEC NUMBER[-PART]:YEAR
+Examples:
+- IEC 61010-1:2020
+- IEC 60950-1:2005
+- IEC 61000-4-2
+```
+
+**IPC Standards**:
+```
+Pattern: IPC-[PREFIX-]NUMBER[REVISION]
+Examples:
+- IPC-2221B
+- IPC-A-610
+- IPC-7351B
+```
+
+**JEDEC Standards**:
+```
+Pattern: JESD{SERIES}-{SPEC}[REVISION]
+Examples:
+- JESD22-A114
+- JESD79-4A
+- JESD51-2
+```
+
+**ISO Standards**:
+```
+Pattern: ISO NUMBER[:YEAR]
+Examples:
+- ISO 9001:2015
+- ISO 26262
+- ISO/IEC 27001:2013
+```
+
+**Vendor Document Numbers**:
+```
+Pattern: VENDOR-DOCID[REVISION]
+Examples:
+- TI-SLUU551C (Texas Instruments)
+- AD-AN1234 (Analog Devices)
+- LT-AN123 (Linear Technology)
+- NXP-AN12345 (NXP Semiconductors)
+```
+
+**Patent Numbers**:
+```
+Pattern: COUNTRY_CODE + NUMBER + KIND_CODE
+Examples:
+- US10245678B2 (US Utility Patent)
+- EP3456789A1 (European Patent)
+- CN108123456A (Chinese Patent)
+```
+
+### Technical Standards APIs
+
+### IEEE Standards API
+
+**Access**: Requires IEEE Xplore API key
+
+**Base URL**: `https://ieeexploreapi.ieee.org/api/v1/search/articles`
+
+**Standard Lookup**:
+```bash
+# Search for specific standard
+curl -H "Content-Type:application/json" \
+  "https://ieeexploreapi.ieee.org/api/v1/search/articles?\
+   querytext=IEEE%20802.11-2020&\
+   apikey=YOUR_KEY"
+```
+
+**Response Fields**:
+- `title`: Full standard title
+- `publication_title`: Standard series
+- `standard_number`: IEEE standard number
+- `doi`: Standard DOI
+- `publication_year`: Year published
+- `publisher`: IEEE
+
+**BibTeX Entry Type**: `@standard`
+
+### IEC Webstore API
+
+**Access**: Limited public access; purchase required for full text
+
+**Search**: Manual search via https://webstore.iec.ch/
+
+**Metadata Available**:
+- Standard number (e.g., IEC 61010-1:2020)
+- Full title
+- Publication date
+- Edition number
+- Status (current, superseded, withdrawn)
+- Scope and summary
+
+**BibTeX Entry Type**: `@standard`
+
+### Vendor Documentation
+
+**Texas Instruments (TI)**:
+- Document pattern: SLUU### (User Guide), SLDS### (Datasheet)
+- Website: https://www.ti.com/
+- API: Product information API available
+- Metadata: Part number, revision, document type, date
+
+**Analog Devices (AD)**:
+- Document pattern: AN-#### (Application Note), UG-#### (User Guide)
+- Website: https://www.analog.com/
+- Metadata: Document number, revision, title, date
+
+**NXP Semiconductors**:
+- Document pattern: AN##### (Application Note), UM##### (User Manual)
+- Website: https://www.nxp.com/
+- Metadata: Document ID, revision, device family
+
+**STMicroelectronics**:
+- Document pattern: AN#### (Application Note), RM#### (Reference Manual)
+- Website: https://www.st.com/
+- Metadata: Document number, revision, product line
+
+### Patent Database APIs
+
+**USPTO (United States Patent and Trademark Office)**:
+- Website: https://www.uspto.gov/
+- API: Patent Examination Data System (PEDS) API
+- Full-text search: PatFT and AppFT
+
+**EPO (European Patent Office)**:
+- Website: https://www.epo.org/
+- API: Open Patent Services (OPS)
+- Espacenet database
+
+**Google Patents**:
+- Website: https://patents.google.com/
+- Public search interface
+- No official API, but bulk data available
+
+## Extraction Workflows for Technical Documents
+
+### From Standard Number
+
+**Quick conversion** (pattern-based):
+
+```bash
+# Single standard
+python scripts/docnum_to_bibtex.py "IEEE 802.11-2020"
+
+# Multiple standards
+python scripts/docnum_to_bibtex.py --input standards.txt --output standards.bib
+```
+
+**Process**:
+1. Parse standard number pattern
+2. Identify organization (IEEE, IEC, IPC, etc.)
+3. Extract number and year
+4. Generate basic BibTeX entry
+5. Optionally query organization API for full metadata
+
+**Comprehensive extraction** (API-based):
+
+```bash
+# Query standards organization API
+python scripts/extract_metadata.py --standard "IEC 61010-1:2020"
+```
+
+**Process**:
+1. Parse standard number
+2. Query organization API (if available)
+3. Extract complete metadata:
+   - Full official title
+   - Organization name
+   - Publication date
+   - Edition/revision
+   - Status (current/superseded)
+   - DOI (if available)
+4. Format as `@standard` entry
+
+### From Vendor Document ID
+
+```bash
+# Extract vendor document metadata
+python scripts/extract_metadata.py --vendor-doc "TI-SLUU551C"
+```
+
+**Process**:
+1. Parse vendor prefix and document ID
+2. Identify vendor from prefix
+3. Query vendor documentation API (if available)
+4. Extract metadata:
+   - Document title
+   - Device/part number
+   - Revision code
+   - Publication date
+   - Document type (datasheet, app note, user guide)
+5. Format as `@manual` entry
+
+**Vendor-specific extraction**:
+
+```bash
+# Texas Instruments
+python scripts/extract_metadata.py \
+  --vendor TI \
+  --doc-id SLUU551C \
+  --part-number UCC28740
+
+# Analog Devices
+python scripts/extract_metadata.py \
+  --vendor AD \
+  --doc-id AN-1234 \
+  --device ADM7150
+```
+
+### From Patent Number
+
+```bash
+# US Patent
+python scripts/extract_metadata.py --patent "US10245678B2"
+
+# European Patent
+python scripts/extract_metadata.py --patent "EP3456789A1"
+```
+
+**Process**:
+1. Parse patent number (country, number, kind code)
+2. Query patent database API:
+   - USPTO for US patents
+   - EPO OPS for European patents
+   - Google Patents as fallback
+3. Extract metadata:
+   - Patent title
+   - Inventors
+   - Assignee (company)
+   - Filing date
+   - Issue/publication date
+   - Classification codes
+4. Format as `@patent` entry
+
+**Patent API example** (USPTO):
+```bash
+# Query USPTO PEDS API
+curl "https://ped.uspto.gov/api/queries" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "searchText": "patentNumber:(10245678)",
+    "qf": "patentNumber",
+    "fl": "patentNumber,patentTitle,inventorName,assigneeName,appFilingDate",
+    "rows": 1
+  }'
+```
+
+### From Technical Document URL
+
+```bash
+# IEEE Standard URL
+python scripts/extract_metadata.py \
+  --url "https://standards.ieee.org/standard/802_11-2020.html"
+
+# TI Datasheet URL
+python scripts/extract_metadata.py \
+  --url "https://www.ti.com/lit/ds/symlink/ucc28740.pdf"
+
+# Patent URL
+python scripts/extract_metadata.py \
+  --url "https://patents.google.com/patent/US10245678B2"
+```
+
+**Process**:
+1. Parse URL to identify type
+2. Extract identifier from URL
+3. Query appropriate API or parse webpage
+4. Extract metadata
+5. Format as appropriate BibTeX entry
+
+## Required BibTeX Fields for Technical Documents
+
+### @standard (Technical Standards)
+
+**Required**:
+- `title`: Full official standard title
+- `number`: Standard number with year
+- `organization`: Standards organization
+- `year`: Publication year
+
+**Optional but recommended**:
+- `edition`: Edition number (for IEC, ISO)
+- `month`: Publication month
+- `doi`: Standard DOI (IEEE standards)
+- `url`: Official URL
+- `note`: Status (current, superseded) or additional info
+
+**Example**:
+```bibtex
+@standard{ieee80211_2020,
+  title        = {IEEE Standard for Information Technology--
+                  Telecommunications and Information Exchange
+                  between Systems - Local and Metropolitan Area
+                  Networks--Specific Requirements - Part 11:
+                  Wireless LAN Medium Access Control (MAC) and
+                  Physical Layer (PHY) Specifications},
+  number       = {IEEE 802.11-2020},
+  organization = {Institute of Electrical and Electronics Engineers},
+  year         = {2020},
+  month        = {feb},
+  doi          = {10.1109/IEEESTD.2021.9363693},
+  url          = {https://standards.ieee.org/standard/802_11-2020.html}
+}
+
+@standard{iec61010_1_2020,
+  title        = {Safety Requirements for Electrical Equipment for
+                  Measurement, Control, and Laboratory Use -
+                  Part 1: General Requirements},
+  number       = {IEC 61010-1:2020},
+  organization = {International Electrotechnical Commission},
+  year         = {2020},
+  edition      = {4th},
+  url          = {https://webstore.iec.ch/publication/63646}
+}
+```
+
+### @manual (Technical Manuals, Datasheets)
+
+**Required**:
+- `title`: Document title or device name
+- `organization`: Vendor/manufacturer
+- `year`: Publication year
+
+**Optional but recommended**:
+- `number`: Document number/ID
+- `note`: Revision code or device part number
+- `month`: Publication month
+- `url`: Document URL
+
+**Example**:
+```bibtex
+@manual{ti_ucc28740,
+  title        = {UCC28740 65-kHz, Flyback-Switch Mode Power Supply Controller},
+  number       = {SLUSCJ3},
+  organization = {Texas Instruments},
+  year         = {2019},
+  month        = {apr},
+  note         = {Rev. C},
+  url          = {https://www.ti.com/lit/ds/symlink/ucc28740.pdf}
+}
+
+@manual{ad_adum1250,
+  title        = {ADUM1250 Dual-Channel Digital Isolator Data Sheet},
+  number       = {ADM1250},
+  organization = {Analog Devices},
+  year         = {2023},
+  note         = {Rev. F},
+  url          = {https://www.analog.com/media/en/technical-documentation/data-sheets/ADuM1250_1251.pdf}
+}
+```
+
+### @patent (Patents)
+
+**Required**:
+- `title`: Patent title
+- `number`: Patent number with country code
+- `year`: Issue/publication year
+
+**Optional but recommended**:
+- `author`: Inventor name(s)
+- `month`: Issue month
+- `assignee`: Company/organization
+- `note`: Patent type or status
+- `url`: Patent URL
+
+**Example**:
+```bibtex
+@patent{us10245678b2,
+  title    = {Power Management System for Integrated Circuits},
+  number   = {US10245678B2},
+  author   = {Smith, John A. and Lee, Robert W.},
+  year     = {2019},
+  month    = {mar},
+  assignee = {Texas Instruments Incorporated},
+  url      = {https://patents.google.com/patent/US10245678B2}
+}
+
+@patent{ep3456789a1,
+  title    = {High-Efficiency DC-DC Converter with Adaptive Control},
+  number   = {EP3456789A1},
+  author   = {M{\"u}ller, Hans and Schmidt, Anna},
+  year     = {2019},
+  month    = {mar},
+  assignee = {Infineon Technologies AG}
+}
+```
+
+### @techreport (Technical Reports, Application Notes)
+
+**Required**:
+- `title`: Report title
+- `institution`: Organization
+- `year`: Publication year
+
+**Optional but recommended**:
+- `number`: Report number
+- `type`: Report type (e.g., "Technical Report", "Application Note")
+- `author`: Author(s) if specified
+- `url`: Report URL
+
+**Example**:
+```bibtex
+@techreport{ti_an2538,
+  title       = {Power Supply Design for Industrial Applications},
+  number      = {SLVA538},
+  type        = {Application Report},
+  institution = {Texas Instruments},
+  year        = {2020},
+  month       = {jun},
+  url         = {https://www.ti.com/lit/an/slva538/slva538.pdf}
+}
+```
+
+## Special Cases for Technical Documents
+
+### Standard Superseded by Newer Version
+
+**Issue**: Citing older standard that has been superseded.
+
+**Best Practice**:
+- Use current version unless specifically referencing historical version
+- Note superseded status if using old version
+
+**Example**:
+```bibtex
+@standard{iec60950_1_2005,
+  title        = {Information Technology Equipment - Safety -
+                  Part 1: General Requirements},
+  number       = {IEC 60950-1:2005},
+  organization = {International Electrotechnical Commission},
+  year         = {2005},
+  note         = {Superseded by IEC 62368-1:2018}
+}
+```
+
+### Vendor Document Revisions
+
+**Issue**: Multiple revision letters (A, B, C, etc.).
+
+**Best Practice**:
+- Always cite specific revision
+- Include revision in `note` field
+- Use latest revision unless citing specific version
+
+**Example**:
+```bibtex
+@manual{ti_sluu551,
+  title        = {UCC28740EVM-525 65-W, Flyback Evaluation Module},
+  number       = {SLUU551},
+  organization = {Texas Instruments},
+  year         = {2019},
+  note         = {Rev. C},
+  url          = {https://www.ti.com/lit/ug/sluu551c/sluu551c.pdf}
+}
+```
+
+### Patents with Multiple Inventors
+
+**Issue**: Large number of inventors.
+
+**Best Practice**:
+- List first inventor(s)
+- Use "and others" for many inventors
+- Or list all if required
+
+**Example**:
+```bibtex
+@patent{us20190123456,
+  author   = {Smith, John A. and Lee, Robert W. and others},
+  title    = {Advanced Power Management Circuit},
+  number   = {US20190123456A1},
+  year     = {2019}
+}
+```
+
+### Standard with National Differences
+
+**Issue**: International standard adopted with national variations.
+
+**Best Practice**:
+- Cite specific national version used
+- Note relationship to international standard
+
+**Example**:
+```bibtex
+@standard{ul61010_1,
+  title        = {Safety Requirements for Electrical Equipment for
+                  Measurement, Control, and Laboratory Use -
+                  Part 1: General Requirements},
+  number       = {UL 61010-1},
+  organization = {UL LLC},
+  year         = {2020},
+  edition      = {4th},
+  note         = {US national differences to IEC 61010-1:2010}
+}
+```
+
+## Validation for Technical Documents
+
+```bash
+# Validate technical document citations
+python scripts/validate_citations.py technical_refs.bib \
+  --check-standards \
+  --check-vendors \
+  --check-patents
+```
+
+**Checks**:
+- Standard number format correct
+- Standard is current (not superseded)
+- Vendor document number valid
+- Patent number format correct
+- All required fields present
+- URLs resolve correctly
+
+## Best Practices for Technical Documentation
+
+### 1. Always Include Specific Version/Revision
+
+Standards and vendor documents are regularly updated:
+```
+✓ IEC 61010-1:2020  # Good: specific year
+✗ IEC 61010-1       # Bad: no year
+
+✓ SLUU551C          # Good: revision code
+✗ SLUU551           # Bad: no revision
+```
+
+### 2. Cite Primary Sources
+
+- Use official organization websites
+- Link to authoritative sources
+- Avoid third-party reprints
+
+### 3. Track Standard Status
+
+Monitor for updates:
+- Standards are revised regularly
+- Check for superseded versions
+- Update citations when standards change
+
+### 4. Document Compliance Requirements
+
+Note which standards are mandatory:
+```bibtex
+note = {Required for CE marking}
+note = {UL certification requirement}
+```
+
+### 5. Include Application Context
+
+For vendor documents, note the application:
+```bibtex
+note = {Rev. C, Design guide for UCC28740 controller}
+```
+
+## Summary for Technical Documents
+
+Hardware engineering citation workflow:
+
+1. **Identify**: Determine document type (standard, datasheet, patent)
+2. **Extract**: Use pattern matching or API queries
+3. **Verify**: Check version/revision currency
+4. **Format**: Use appropriate BibTeX entry type
+5. **Validate**: Verify completeness and accuracy
+6. **Track**: Monitor for updates and revisions
+
+**Use specialized scripts**:
+- `docnum_to_bibtex.py`: Quick standard number conversion
+- `extract_metadata.py`: Comprehensive API-based extraction
+- `search_standards.py`: Find relevant standards
+- `search_ieee_xplore.py`: Search IEEE technical literature
+
+**Always document**:
+- Specific version/revision
+- Publication date
+- Organization/vendor
+- Compliance context
+

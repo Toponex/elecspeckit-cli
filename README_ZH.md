@@ -21,7 +21,7 @@ ElecSpeckit 的解决方案：
 - ✅ **AI 辅助澄清需求**：通过 `/elecspeckit.clarify` 自动发现规格中的模糊点，以选择题形式快速澄清
 - ✅ **结构化架构决策**：`/elecspeckit.plan` 引导完成 Phase 0 研究（如拓扑选择、器件选型），并在 `research.md` 中记录决策依据
 - ✅ **自动生成角色视图**：一份 `tasks.md` 自动生成 HW/BOM/Test/FA/PM 等 7 个角色专属视图，信息同步零延迟
-- ✅ **Claude Skills 集成**：Claude Code 平台支持 23+ 专业 Skills，用于元器件搜索、标准查询和设计验证（Qwen 平台功能受限）
+- ✅ **Claude Skills 集成**：Claude Code 平台支持 15 个专业 Skills，用于元器件搜索、标准查询和设计验证（Qwen 平台功能受限）
 - ✅ **文档一致性检查**：`/elecspeckit.analyze` 自动检测 spec/plan/tasks 之间的不一致，验证需求覆盖、宪法对齐和术语一致性
 
 ## ⚠️ 重要提示
@@ -53,7 +53,7 @@ ElecSpeckit 通过代码规则约束 AI 输出，但受限于 Transformer 架构
 
 ### 3. Claude Skills（仅限 Claude Code）
 
-Claude Code 平台提供 23+ 专业 Skills（存储在 `.claude/skills/`）：
+Claude Code 平台提供 15 个专业 Skills（存储在 `.claude/skills/`）：
 
 - **元器件搜索**：查询 Mouser、Digikey、立创商城、立创EDA 等平台的元器件库存和价格
 - **标准查询**：访问本地 IPC/ISO 标准和参考设计文档
@@ -162,7 +162,7 @@ ElecSpeckit CLI v0.2.0
     Qwen Code
 ```
 
-- **Claude Code (recommended)** - 完整 Skills 支持，包含 23+ 专业工具
+- **Claude Code (recommended)** - 完整 Skills 支持，包含 15 个专业工具
 - **Qwen Code** - 基础功能，Skills 支持受限
 
 **非交互式初始化**（用于 CI/CD）：
@@ -886,7 +886,7 @@ ruff check src/ tests/
 ### v0.2.0 (当前版本)
 
 **重大变更**：
-- ✨ **新增 Claude Skills 支持**：Claude Code 平台现支持 23+ 专业 Skills，存储在 `.claude/skills/` 目录
+- ✨ **新增 Claude Skills 支持**：Claude Code 平台现支持 15 个专业 Skills，存储在 `.claude/skills/` 目录
 - 🔄 **移除 kb_config 机制**：旧的 `knowledge-sources.json` 和 `/elecspeckit.kbconfig` 命令已被 Claude Skills 替代
 - 📦 **Skills 自动部署**：初始化 Claude 项目时自动部署信息检索、文档生成、数据分析、嵌入式开发等 Skills
 - ⚙️ **新增 `/elecspeckit.skillconfig` 命令**：管理 Skills 的启用/禁用、API 密钥配置

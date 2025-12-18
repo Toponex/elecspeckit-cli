@@ -90,7 +90,7 @@ include = [
 
 [tool.pytest.ini_options]
 # 测试目录指向根目录的版本化测试结构（参见 spec.md 测试目录结构说明）
-testpaths = ["../../tests/v0.2.0"]
+testpaths = ["../../tests/v0.2.1"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]

@@ -1,6 +1,7 @@
 ---
 name: arxiv-search
 description: Search arXiv preprint repository for papers in electronic engineering, embedded systems, computer science, physics, mathematics, and related fields.
+version: "1.0.0"
 ---
 # arXiv Search Skill
 
